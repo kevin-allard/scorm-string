@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Player</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="player-container">
+        <header id="player-header">
+            <h1>Lesson Player</h1>
+            <div id="controls">
+                <label for="activate-select">Select an Activate Activity:</label>
+                <select id="activate-select"></select>
+            </div>
+        </header>
+
+        <main id="content-window">
+            <iframe id="content-frame" src="" title="Lesson Content"></iframe>
+        </main>
+
+        <footer id="player-navigation">
+            <button id="prev-btn">&laquo; Previous</button>
+            <span id="page-indicator">Page 0 of 0</span>
+            <button id="next-btn">Next &raquo;</button>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
