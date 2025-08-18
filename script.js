@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. UPDATED DATA STRUCTURE ---
-    // The data now includes the source folder for each file,
-    // matching the "File Folder" column in your CSV.
+    // --- 1. DATA STRUCTURE (Unchanged) ---
     const lessonData = {
         'Lesson Overview': [
             { file: '378289.xhtml', folder: 'Lesson Overview' }
@@ -46,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. STATE MANAGEMENT ---
     let currentPageIndex = 0;
-    let currentLessonPages = []; // This will be an array of objects {file, folder}
+    let currentLessonPages = []; 
 
     // --- 3. DOM ELEMENT REFERENCES ---
     const iframe = document.getElementById('content-frame');
@@ -54,29 +52,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('next-btn');
     const pageIndicator = document.getElementById('page-indicator');
     const activateSelect = document.getElementById('activate-select');
+    // **NEW**: Add a reference to the title element
+    const playerTitle = document.getElementById('player-title');
 
     // --- 4. CORE FUNCTIONS ---
 
     /**
-     * Builds the full sequence of lesson pages based on the dropdown selection.
+     * **MODIFIED**: Builds the lesson sequence and adds the "Lesson Block" title to each page object.
      */
     function buildLessonSequence() {
         const selectedActivateKey = activateSelect.value;
-        const selectedActivatePages = activateActivities[selectedActivateKey];
 
-        // Assemble the lesson in the correct order
+        // Helper function to map pages and add the block title
+        const mapPages = (blockTitle, pages) => {
+            return pages.map(page => ({
+                ...page, // copy existing file and folder info
+                block: blockTitle // add the lesson block title
+            }));
+        };
+        
+        const selectedActivatePages = mapPages(selectedActivateKey, activateActivities[selectedActivateKey]);
+
+        // Assemble the lesson in order, mapping each block
         currentLessonPages = [
-            ...lessonData['Lesson Overview'],
+            ...mapPages('Lesson Overview', lessonData['Lesson Overview']),
             ...selectedActivatePages,
-            ...lessonData['Explore and Develop'],
-            ...lessonData['Reflect'],
-            ...lessonData['Interactive Journal']
+            ...mapPages('Explore and Develop', lessonData['Explore and Develop']),
+            ...mapPages('Reflect', lessonData['Reflect']),
+            ...mapPages('Interactive Journal', lessonData['Interactive Journal'])
         ];
     }
 
     /**
-     * Loads a specific page into the iframe by its index in the sequence.
-     * @param {number} index - The index of the page to load.
+     * Loads a specific page into the iframe. (Unchanged)
      */
     function loadPage(index) {
         if (index < 0 || index >= currentLessonPages.length) {
@@ -85,8 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentPageIndex = index;
         const pageInfo = currentLessonPages[currentPageIndex];
-        
-        // **KEY CHANGE HERE**: Construct the path using the folder and file properties
         const filePath = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
         
         iframe.src = filePath;
@@ -94,19 +100,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Updates the navigation buttons (enabling/disabling) and page indicator text.
+     * **MODIFIED**: Updates navigation, page indicator, AND the main title.
      */
     function updateUI() {
+        // Update page indicator text
         pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${currentLessonPages.length}`;
+
+        // Disable/enable buttons
         prevBtn.disabled = (currentPageIndex === 0);
         nextBtn.disabled = (currentPageIndex === currentLessonPages.length - 1);
+
+        // **NEW**: Update the main title with the current lesson block name
+        if (currentLessonPages.length > 0) {
+            playerTitle.textContent = currentLessonPages[currentPageIndex].block;
+        }
     }
     
     /**
-     * Populates the dropdown menu with options from the activateActivities object.
+     * Populates the dropdown menu. (Unchanged)
      */
     function populateDropdown() {
-        // Use Object.keys to ensure a consistent order
         Object.keys(activateActivities).forEach(key => {
             const option = document.createElement('option');
             option.value = key;
@@ -115,8 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. EVENT LISTENERS ---
-
+    // --- 5. EVENT LISTENERS (Unchanged) ---
     nextBtn.addEventListener('click', () => {
         if (currentPageIndex < currentLessonPages.length - 1) {
             loadPage(currentPageIndex + 1);
@@ -134,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPage(0);
     });
 
-    // --- 6. INITIALIZATION ---
+    // --- 6. INITIALIZATION (Unchanged) ---
     function initializePlayer() {
         populateDropdown();
         buildLessonSequence();
