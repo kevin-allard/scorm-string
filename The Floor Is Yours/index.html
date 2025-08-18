@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, user-scalable=no">
+
+<script src="META-INF/data.js"></script>
+
+<link rel="stylesheet" href="sdk/0.0.2/css/styles.min.css">
+
+
+<script src="sdk/0.0.2/src/kitaboo-0.0.2.js"></script>
+
+<script type="text/javascript" src="sdk/0.0.2/localization/modernizr.js"></script>
+<script type="text/javascript" src="sdk/0.0.2/localization/jquery_localize.js"></script>
+<script type="text/javascript" src="kitaboo-author-button-data.js"></script>
+
+
+
+<script>
+            var cloudbook = "";
+			var playerMenuSet = false;
+		document.onreadystatechange = function () {
+			if (document.readyState == "complete") {
+				var config = {
+					isKitabooSearchsupport: true,
+					isminiplayer: true,
+					isofflinechromesupport: false
+				};
+				window.book = new eBook(cloudbook, config);
+				var tocitems = window.book.bookdata.toc;
+				var tocitems1 = window.book.bookdata.headerToc;
+
+				if(tocitems.length <= 1 && typeof prebook.isEmptyMenuHide != "undefined" && prebook.isEmptyMenuHide == true && !prebook.isOldSkin){
+					if(tocitems1.length <= 1){
+						if(tocitems1.length == 0 || (tocitems1 && typeof tocitems1[0].headers == "undefined") || (tocitems1[0].headers.length == 0)){
+							$('.toc').hide();
+						}
+					}
+				}
+
+				book.Onaction("book:loadstart", function () {
+
+				});
+
+				book.Onaction("book:loadend", function () {
+
+					window.book.getMetaData(function (data) {
+						document.getElementById('name').innerText = data.bookTitle;
+						buildTOC();
+					});
+				});
+
+				book.Onaction("book:chapterDisplayed", function () {
+
+					if (viewer.isMiniplayer) {
+
+
+
+						var currentpage = window.viewer.currentChapter.Index;
+
+						var total = window.viewer.chapter.length;
+						document.getElementById('count').innerText = "" + (currentpage + 1) + " " + window.localeJson.of + " " + total;
+						document.getElementById('gradableActivityPageCount').innerHTML = "<span class='rubik700'>" + (currentpage + 1) + "</span> / " + total;
+						if($('#bottompanal4').length){
+							let prev = $('#bottompanal4 #gradableActivityPageCount').parents('.pagenavigation').find('#prev');
+							let next = $('#bottompanal4 #gradableActivityPageCount').parents('.pagenavigation').find('#next');
+							prev.removeClass('disabled');
+							next.removeClass('disabled');
+							if(currentpage == 0){
+								prev.addClass('disabled');
+							}
+							if((currentpage+1) == total){
+								next.addClass('disabled');
+							}
+						}
+						document.body.style.overflow = "hidden";
+						document.body.style.margin = 0;
+					}
+					loadPlayer();
+					// if(!playerMenuSet && prebook && typeof prebook.isOldSkin != "undefined" && prebook.isOldSkin == true){
+					// 	$('.bottompanal').removeClass('hide');
+					// 	$('.bottompanal_ladscape1').addClass('hide');
+					// 	$('.bottompanal_ladscape2').addClass('hide');
+					// 	$('.bottompanal_ladscape3').addClass('hide');
+					// 	$('.bottompanel4').addClass('hide');
+					// 	playerMenuSet = true;
+					// }else if(!playerMenuSet && prebook && typeof prebook.isOldSkin != "undefined" && prebook.isOldSkin == false){
+					// 	$('.bottompanal').addClass('hide');
+					// 	$('.bottompanal_ladscape1').addClass('hide');
+					// 	$('.bottompanal_ladscape2').addClass('hide');
+					// 	$('.bottompanal_ladscape3').addClass('hide');
+					// 	$('.bottompanel4').addClass('hide');
+					// 	if(typeof prebook.isNewPlayerSkin != "undefined" && prebook.isNewPlayerSkin == true){
+					// 		$('.bottompanel4').removeClass('hide');
+					// 	}else{
+					// 		$('.bottompanal').removeClass('hide');
+					// 	}
+					// 	playerMenuSet = true;
+					// }
+					if (window.viewer.doc != undefined) {
+						var docWindow = window.viewer.doc.defaultView;
+
+						var docBody = window.viewer.doc.body;
+						docBody.click(function () {
+							checkPanel();
+							addFontStyle();
+						});
+
+					}
+
+					if (JSON.parse("true") == true) {
+						$('#toppanel').css({
+							'display': 'none'
+						});
+					}
+					$(docWindow).scroll(function () {
+
+						if ($(docWindow).scrollTop() == 0) {
+							$('.maincontainer').css({
+								'-webkit-box-shadow': 'none',
+								'-moz-box-shadow': 'none',
+								'box-shadow': 'none',
+								'-webkit-transition': 'box-shadow 0.3s',
+								'transition': 'box-shadow 0.3s'
+							});
+						} else {
+							$('.maincontainer').css({
+								'-webkit-box-shadow': 'inset 0px 5px 25px 5px rgba(99,96,86,1)',
+								'-moz-box-shadow': ' 0px 5px  11px 1px  rgba(99,96,86,1)',
+								'box-shadow': ' 0px 5px  11px 1px rgba(99,96,86,1)',
+								'-webkit-transition': 'box-shadow 0.3s',
+								'transition': 'box-shadow 0.3s'
+							});
+						}
+					});
+
+
+
+					$('#tocchild').scroll(function () {
+						if ($('#tocchild').scrollTop() == 0) {
+							$('#tocchild').css({
+								'-webkit-box-shadow': 'none',
+								'-moz-box-shadow': 'none',
+								'box-shadow': 'none',
+								'-webkit-transition': 'box-shadow 0.3s',
+								'transition': 'box-shadow 0.3s'
+							});
+						} else {
+							$('#tocchild').css({
+								'-webkit-box-shadow': 'inset 0px 10px 10px -3px rgba(99,96,86,0.3)',
+								'-moz-box-shadow': 'inset 0px 10px 10px -3px rgba(99,96,86,0.3)',
+								'box-shadow': 'inset 0px 10px 10px -3px rgba(99,96,86,0.3)',
+								'-webkit-transition': 'box-shadow 0.3s',
+								'transition': 'box-shadow 0.3s'
+							});
+						}
+					});
+
+
+					$('.maincontainer iframe').contents().find("head")
+						.append($("<style type='text/css'>  ::-webkit-scrollbar {	width: 5px;}::-webkit-scrollbar-track {-webkit-box-shadow: inset 0 0 0;-webkit-border-radius: 0px;	border-radius: 0px;}::-webkit-scrollbar-thumb {-webkit-border-radius: 0px;	border-radius: 0px;	background: #d6d6d6;-webkit-box-shadow: inset 0 0 6px #d6d6d6;}::-webkit-scrollbar-thumb:window-inactive {background: #d6d6d6;}  </style>"
+						));
+
+
+
+					$('#toppanel, #bottompanal').on('click', function (event) {
+						if (event.target == $('.toc')[0] || event.target == $('#menu')[0]) {
+							event.preventDefault();
+							event.stopPropagation();
+						} else {
+							checkPanel();
+						}
+					});
+				});
+				$(".bottompanel4 .showHideBottomPanel").click(function () {
+					if($('.gradableActivityBottomPanel').hasClass('hidden')){
+						$(this).find('.arrowIcon').css('transform', 'rotate(0deg)');
+						$('.bottompanel4').css('transform', 'translateY(0px)');
+						$('.gradableActivityBottomPanel').removeClass('hidden');
+						$('.maincontainer').css('height', 'calc(100% - 50px)');
+					} else {
+						$(this).find('.arrowIcon').css('transform', 'rotate(180deg)');
+						$('.bottompanel4').css('transform', 'translateY(50px)');
+						$('.gradableActivityBottomPanel').addClass('hidden');
+						$('.maincontainer').css('height', '100%');
+					}
+				});
+				// $(".bottompanel4 .hideBottomPanel").click(function () {
+				// 	$('.hideBottomPanel').addClass('hide');
+				// 	$('.gradableActivityBottomPanel').addClass('hide');
+				// 	$('.showBottomPanel').removeClass('hide');
+				// });
+			}
+		}
+
+		function checkPanel() {
+			if ($('#tocitems').hasClass('isOpened') && document.getElementById('tocitems').style.display == 'block') {
+				document.getElementById('tocitems').style.display = 'none';
+				document.getElementsByClassName("toc")[0].classList.remove("highlightBackground");
+			} else {
+				$('#tocitems').removeClass('isOpened');
+			}
+		}
+
+		var toctreeview;
+		function onClose() {
+			alert("Please close the window");
+		}
+
+		function buildTOC() {
+
+
+			var elements = document.getElementById('tocholder');
+			elements.innerHTML = "<div id='tree'></div>";
+			var tocitems = window.book.bookdata.toc;
+			var tocitems1 = window.book.bookdata.headerToc;
+			var tree = "";
+			if (tocitems1 != "" && typeof tocitems1 != 'undefined') {
+				for (var i = 0; i < tocitems.length; i++) {
+					if (!tocitems1[i]) {
+						tocitems1[i] = {};
+					}
+					tocitems1[i].href = tocitems[i].href;
+					tocitems1[i].cfi = tocitems[i].cfi;
+					tocitems1[i].spinePos = tocitems[i].spinePos;
+					if (!tocitems1[i].title || tocitems1[i].title == "") {
+						tocitems1[i].title = tocitems[i].label;
+					}
+					if (typeof (tocitems1[i].headers) != 'undefined') {
+						if (tocitems1[i].headers.length > 0) {
+							tocSubHeader = tocitems1[i].headers;
+						}
+					}
+				}
+				tree = tocitems1;
+			}
+			else {
+				tree = tocitems;
+			}
+			var treeLength = tree.length;
+
+			toctreeview = new TreeView(tree, 'tree');
+
+
+			switch (true) {
+				case (treeLength == 0):
+					document.getElementById("tocitems").style.cssText += 'height: 90px; text-align: center';
+					document.getElementById("tocchild").innerHTML = '<span class="noResultFound">Results not found.</span>';
+					break;
+				case (treeLength == 1):
+					document.getElementById("tocitems").style.cssText += 'height: 65px';
+					break;
+				case (treeLength == 2):
+					document.getElementById("tocitems").style.cssText += 'height: 110px';
+					break;
+				case (treeLength == 3):
+					document.getElementById("tocitems").style.cssText += 'height: 160px';
+					break;
+				case (treeLength == 4):
+					document.getElementById("tocitems").style.cssText += 'height: 210px';
+					break;
+				case (treeLength == 5):
+					document.getElementById("tocitems").style.cssText += 'height: 260px';
+					break;
+				case (treeLength == 6):
+					document.getElementById("tocitems").style.cssText += 'height: 310px';
+					break;
+				case (treeLength == 7):
+					document.getElementById("tocitems").style.cssText += 'height: 360px';
+					break;
+				case (treeLength == 8):
+					document.getElementById("tocitems").style.cssText += 'height: 420px';
+					break;
+				case (treeLength == 9):
+					document.getElementById("tocitems").style.cssText += 'height: 480px';
+					break;
+				default:
+					document.getElementById("tocitems").style.cssText += 'height: 530px';
+			}
+
+			toctreeview.on('select', function (e) {
+				$('.tree-leaf-text').removeClass('bold_style');
+				$(e.target.target).addClass('bold_style');
+				loadChapterFromTOC(e.data);
+				document.getElementById('tocitems').style.display = 'none';
+				document.getElementsByClassName("toc")[0].classList.remove("highlightBackground");
+			});
+			toctreeview.on('expand', function (e) {
+				console.log('expand');
+			});
+			toctreeview.on('collapse', function () {
+				console.log('collapse');
+			});
+			toctreeview.on('expandAll', function () {
+				console.log('expand all');
+			});
+			toctreeview.on('collapseAll', function () {
+				console.log('collapse all');
+			});
+		}
+
+		function toggleToc() {
+			if (document.getElementById('tocitems').style.display == "" || document.getElementById('tocitems').style.display == 'none') {
+				document.getElementById('tocitems').classList.add("isOpened");
+				document.getElementById('tocitems').style.display = 'block';
+				document.getElementsByClassName("toc")[0].classList.add("highlightBackground");
+				buildTOC();
+				addFontStyle();
+			} else {
+				document.getElementById('tocitems').classList.remove("isOpened");
+				document.getElementById('tocitems').style.display = 'none';
+				document.getElementsByClassName("toc")[0].classList.remove("highlightBackground");
+			}
+
+		}
+
+		function addFontStyle() {
+			var itemlist = $('[data-item]');
+			$('.tree-leaf-text').removeClass('bold_style');
+			for (var i = 0; i < itemlist.length; i++) {
+				if (viewer.currentHeader != "" && typeof viewer.currentHeader != 'undefined') {
+					if (viewer.currentHeader == JSON.parse($(itemlist[i]).attr('data-item')).hashValue) {
+						var itemLabel = JSON.parse($(itemlist[i]).attr('data-item')).title;
+						$('.left #name').html(itemLabel);
+						$(itemlist[i]).removeClass('bold_style');
+						$($(itemlist[i])[0]).addClass('bold_style');
+					}
+					else {
+						$(itemlist[i]).removeClass('bold_style');
+					}
+				} else {
+					if (viewer.currentChapter.Index == JSON.parse($(itemlist[i]).attr('data-item')).spinePos) {
+						var itemLabel = "";
+						if (typeof JSON.parse($(itemlist[i]).attr('data-item')).title != 'undefined') {
+							itemLabel = JSON.parse($(itemlist[i]).attr('data-item')).title;
+						}
+						else {
+							itemLabel = JSON.parse($(itemlist[i]).attr('data-item')).label;
+						}
+						$('.left #name').html(itemLabel);
+						$(itemlist[i]).removeClass('bold_style');
+						$($(itemlist[i])[0]).addClass('bold_style');
+					} else {
+						$(itemlist[i]).removeClass('bold_style');
+					}
+				}
+			}
+		}
+		window.addEventListener("message", playerLoadedCallback, false);
+		var sccomData = {};
+
+		function playerLoadedCallback(event, data) {
+			if (event.data.player == 'ready') {
+				var playerData = { "buttonData": buttonData, "sccomData": sccomData }
+				document.getElementById('page').contentWindow.postMessage(playerData, '*');
+			}
+			if (event.data.scormdata == 'ready') {
+				sccomData = event.data.scormJsonData;
+			}
+		}
+
+		$(document).ready(function(){
+                window.localeJson = {
+	"incorrect_last_try" : "That's incorrect, this was your last attempt.",
+	"incorrect_message" : "Please try again",
+	"missed_words" : "You might have missed some words",
+	"submit" : "Submit",
+	"reset_me" : "Reset",
+	"show_me" : "Show Me",
+	"try_again" : "Try Again",
+	"strike" : "Strikethrough",
+	"of" :"of",
+	"correct" : "This is correct",
+        "select_answer":"Select Answer"
+};window.applyAllStyleSettingJson={"h2-style":{"styleSettingFlag":false,"styleSettingJson":{"headerDataText":""}},"paragraph":{"styleSettingFlag":false,"styleSettingJson":{"header":""}},"h5-style":{"styleSettingFlag":false,"styleSettingJson":{"headerDataText":""}},"defaultFontName":"","h3-style":{"styleSettingFlag":false,"styleSettingJson":{"headerDataText":""}},"chapter-headingNew-h1":{"styleSettingFlag":false,"styleSettingJson":{"authorName":"","headerTitleText":"","chapterheadingTitleText":"","headerChapterNo":""}},"h6-style":{"styleSettingFlag":false,"styleSettingJson":{"headerDataText":""}},"h4-style":{"styleSettingFlag":false,"styleSettingJson":{"headerDataText":""}}}
+				// var opts = { language: "en",pathPrefix:"OEBPS/localization/"};				
+				// $("[data-localize]").localize("player", opts);
+                // setTimeout(function(){
+                //     document.getElementById('page').contentWindow.postMessage(buttonData,'*');
+                // },500);
+		    });
+
+			function hideAllPlayerSkin(){
+				$('.bottompanal').addClass('hide');
+				$('.bottompanal_ladscape1').addClass('hide');
+				$('.bottompanal_ladscape2').addClass('hide');
+				$('.bottompanal_ladscape3').addClass('hide');
+				$('.bottompanel4').addClass('hide');
+			}
+
+			function loadPlayer(){
+				hideAllPlayerSkin();
+				if(prebook && prebook.isOldSkin){
+					$('.bottompanal').removeClass('hide');
+				}else if(prebook && prebook.isLandscapeActivity){
+					var lesson_location = (viewer.currentChapter && viewer.currentChapter.Index) ? viewer.currentChapter.Index : 0;
+					if(window.top.API && typeof (window.top.API.LMSGetValue('cmi.core.lesson_location') == "number")){
+						lesson_location = window.top.API.LMSGetValue('cmi.core.lesson_location') != 0 ? window.top.API.LMSGetValue('cmi.core.lesson_location') - 1 : 0;
+					}
+					if (lesson_location == 0) {
+						$('.bottompanal_ladscape1').removeClass('hide');
+						$('.startbtn_text').text(window.localeJson.StartCourseText);
+					} else if (lesson_location == viewer.chapter.length - 1) {
+						$('.bottompanal_ladscape3').removeClass('hide');
+						$('.back_btn').text(window.localeJson.previousBtnTxt);
+						$('.finshBtn_text').text(window.localeJson.endBtnText);
+					} else {
+						$('.bottompanal_ladscape2').removeClass('hide');
+						$('.btn_back_text').text(window.localeJson.previousBtnTxt);
+						$('.next_btn_text').text(window.localeJson.nextBtnText);
+					}
+				}else if(prebook && prebook.isNewPlayerSkin){
+					$('.bottompanel4').removeClass('hide');
+				}else{
+					$('.bottompanal').removeClass('hide');
+				}
+			}
+   
+			
+		// 	var isLandscape = false;
+		// 	function checkLandScapeMode(event, data) {
+		// 	if (typeof event.data.isLandscapeActivity != "undefined") {
+		// 		if (prebook && prebook.isOldSkin != "undefined" && !prebook.isOldSkin && event.data.isLandscapeActivity) {
+		// 			isLandscape = true;
+		// 			$('.bottompanal').addClass('hide');
+		// 			$('.bottompanal_ladscape1').addClass('hide');
+		// 			$('.bottompanal_ladscape2').addClass('hide');
+		// 			$('.bottompanal_ladscape3').addClass('hide');
+		// 			$('.bottompanel4').addClass('hide');
+		// 			var lesson_location = viewer.currentChapter.Index;
+		// 			var apiHandle = window.top.API;
+		// 			if (!apiHandle) {
+		// 				apiHandle = window.API;
+		// 				if (!apiHandle) {
+		// 					apiHandle = window.parent.API
+		// 				}
+		// 			}
+		// 			let firstTimeLoad = localStorage.getItem('playerLoadFirstTime');
+		// 			if (apiHandle && firstTimeLoad == 'true') {
+		// 				let tempNum = apiHandle.LMSGetValue('cmi.core.lesson_location');
+		// 				if (tempNum && typeof tempNum == 'number') {
+		// 					lesson_location = tempNum - 1;
+		// 				}
+		// 			}
+		// 			if (lesson_location == 0) {
+		// 				$('.bottompanal_ladscape1').removeClass('hide');
+		// 				$('.startbtn_text').text(event.data.StartCourseText);
+		// 			} else if (lesson_location == viewer.chapter.length - 1) {
+		// 				$('.bottompanal_ladscape3').removeClass('hide');
+		// 				$('.back_btn').text(event.data.previousBtnTxt);
+		// 				$('.finshBtn_text').text(event.data.endBtnText);
+		// 			} else {
+		// 				$('.bottompanal_ladscape2').removeClass('hide');
+		// 				$('.btn_back_text').text(event.data.previousBtnTxt);
+		// 				$('.next_btn_text').text(event.data.nextBtnText);
+		// 			}
+		// 			playerMenuSet = true;
+		// 		} else if(prebook && prebook.isOldSkin != "undefined" && !prebook.isOldSkin){
+		// 			$('.bottompanal').addClass('hide');
+		// 			$('.bottompanal_ladscape1').addClass('hide');
+		// 			$('.bottompanal_ladscape2').addClass('hide');
+		// 			$('.bottompanal_ladscape3').addClass('hide');
+		// 			$('.bottompanel4').addClass('hide');
+		// 			if(typeof prebook.isNewPlayerSkin != "undefined" && prebook.isNewPlayerSkin == true){
+		// 				$('.bottompanel4').removeClass('hide');
+		// 			}else{
+		// 				$('.bottompanal').removeClass('hide');
+		// 			}
+		// 			playerMenuSet = true;
+		// 		}
+		// 	}
+		// }
+
+		// function checkGradableActivity(event, data) {
+		// 	if (typeof event.data.isGradableActivity != "undefined") {
+		// 		if (!playerMenuSet && event.data.isGradableActivity == true && isLandscape == false) {
+		// 			$('.bottompanal').addClass('hide');
+		// 			$('.bottompanal_ladscape1').addClass('hide');
+		// 			$('.bottompanal_ladscape2').addClass('hide');
+		// 			$('.bottompanal_ladscape3').addClass('hide');
+		// 			$('.bottompanel4').addClass('hide');
+		// 			if(typeof prebook.isNewPlayerSkin != "undefined" && prebook.isNewPlayerSkin == true){
+		// 				$('.bottompanel4').removeClass('hide');
+		// 			}else{
+		// 				$('.bottompanal').removeClass('hide');
+		// 			}
+		// 			$('.back_btn').text(event.data.previousBtnTxt);
+		// 			$('.finshBtn_text').text(event.data.endBtnText);
+		// 			playerMenuSet = true;
+		// 		}
+		// 	}
+		// }
+		// window.addEventListener("message", checkLandScapeMode, false);
+		// window.addEventListener("message", checkGradableActivity, false);
+						
+        </script>
+</head>
+<body>
+	<div class="toppanel" id="toppanel" style="display: none;">
+		<div class="left">
+			<span class="centertext" id="name">Kitaboo widget</span>
+		</div>
+		<div class="rightclose" onclick="onClose()" style="display: none;">
+			<img class="centertext icon-video_player_close" id="close" src="sdk/0.0.2/img/close.svg"></img>
+		</div>
+	</div>
+	<div class="tocpanel" id="tocitems">
+		<div id="tocchild">
+			<div class="tocloader"></div>
+			<div class="item" id="tocholder"></div>
+		</div>
+	</div>
+	<div class="maincontainer">
+		<div class="loader" id="loader">
+			<img alt="loader" src="sdk/0.0.2/img/loader.gif">
+		</div>
+		<div class="epubviewer" id="epubviewer"></div>
+	</div>
+	<div class="bottompanal hide" id="bottompanal">
+		<div class="toc" onclick="toggleToc()">
+			<!-- <img class="centertext icon-toc" id="menu" src="sdk/0.0.2/img/TOC.svg"></img> -->
+			<object class="centertext icon-toc" id="menu" data="sdk/0.0.2/img/TOC.svg" type="image/svg+xml"></object>
+		</div>
+		<div class="pagenavigation">
+			<div id="prev" class="arrow " onclick="previousChapter()">
+				<!-- <img class="centertext icon-prev_page_icon" src="sdk/0.0.2/img/back.svg"></img> -->
+				<object class="centertext icon-prev_page_icon" data="sdk/0.0.2/img/back.svg"
+					type="image/svg+xml"></object>
+			</div>
+			<div class="label">
+				<span class="centertext" id="count">0</span>
+			</div>
+			<div id="next" class="arrow" onclick="nextChapter()">
+				<!-- <img class="centertext icon-next_page_icon" src="sdk/0.0.2/img/next.svg"></img> -->
+				<object class="centertext icon-next_page_icon" data="sdk/0.0.2/img/next.svg"
+					type="image/svg+xml"></object>
+			</div>
+		</div>
+	</div>
+
+	<div class="bottompanal_ladscape1 hide" id="start_course_btn">
+		<div class="btn" onclick="nextChapter()">
+			<span class="startbtn_text">Start Course</span>
+		</div>
+	</div>
+
+	<div class="bottompanal_ladscape2 hide" id="prev_next_btn">
+		<div class=" back_btn" onclick="previousChapter()">
+			<span class="btn_back_text">Back</span>
+		</div>
+		<div class="btn" onclick="nextChapter()">
+			<span class="next_btn_text">Next</span>
+		</div>
+	</div>
+
+	<div class="bottompanal_ladscape3 hide" id="back_end_btn">
+		<div class="back_btn" onclick="previousChapter()">
+			<span class="btn_back_text">Back</span>
+		</div>
+		<div class="btn" onclick="nextChapter()">
+			<span class="finshBtn_text">Finish</span>
+		</div>
+	</div>
+
+	<div class="bottompanel4 hide" id="bottompanal4">
+		<div class="showHideBottomPanel">
+			<object class="centertext arrowIcon icon-prev_page_icon" data="sdk/0.0.2/img/arrow_up.svg"
+				type="image/svg+xml"></object>
+		</div>
+		<div class="gradableActivityBottomPanel">
+			<div class="toc" onclick="toggleToc()">
+				<object class="centertext icon-toc" id="menu" data="sdk/0.0.2/img/TOC_2.svg"
+					type="image/svg+xml"></object>
+			</div>
+			<div class="pagenavigation">
+				<div id="prev" class="arrow" onclick="previousChapter()">
+					<!-- <img class="centertext icon-prev_page_icon" src="sdk/0.0.2/img/back.svg"></img> -->
+					<object class="centertext icon-prev_page_icon" data="sdk/0.0.2/img/arrow_left.svg"
+						type="image/svg+xml"></object>
+				</div>
+				<div class="label">
+					<span class="centertext rubik400" id="gradableActivityPageCount">0</span>
+				</div>
+				<div id="next" class="arrow" onclick="nextChapter()">
+					<!-- <img class="centertext icon-next_page_icon" src="sdk/0.0.2/img/next.svg"></img> -->
+					<object class="centertext icon-next_page_icon" data="sdk/0.0.2/img/arrow_right.svg"
+						type="image/svg+xml"></object>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
