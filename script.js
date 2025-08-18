@@ -162,4 +162,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderSupportItem(item) {
-        const el = d
+        const el = document.createElement('div');
+        el.className = 'support-item';
+        let content = `<h4>${item.feature_title}</h4>`;
+        const data = item.feature_data;
+
+        if (data.purpose) content += `<p><strong>Purpose:</strong> ${data.purpose}</p>`;
+
+        if (data.steps) {
+            content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
+        } else if (data.text) {
+             content += data.text;
+        } else if (data.questions) {
+             content += '<ul>' + data.questions.map(q => `<li>${q}</li>`).join('') + '</ul>';
+        } else if (data.items && Array.isArray(data.items)) {
+            // Handle purposeful questions structure
+            content += '<ul>';
+            data.items.forEach(q_set => {
+                content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join('');
+            });
+            content += '</ul>';
+        }
+        
+        el.innerHTML = content;
+        return el;
+    }
+
+    function toggleTeacherPane(show) {
+        if (show) {
+            teacherPane.classList.add('is-open');
+            paneBackdrop.classList.add('is-visible');
+        } else {
+            teacherPane.classList.remove('is-open');
+            paneBackdrop.classList.remove('is-visible');
+        }
+    }
+
+    // --- 7. EVENT LISTENERS ---
+    nextBtn.addEventListener('click', () => {
+        if (currentPageIndex < currentLessonPages.length - 1) {
+            loadPage(currentPageIndex + 1);
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentPageIndex > 0) {
+            loadPage(currentPageIndex - 1);
+        }
+    });
+
+    activateSelect.addEventListener('change', () => {
+        buildLessonSequence();
+        loadPage(0);
+    });
+
+    // New listeners for the pane
+    teacherBtn.addEventListener('click', () => toggleTeacherPane(true));
+    closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
+    paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
+    
+    // --- 8. INITIALIZATION ---
+    async function initializePlayer() {
+        await loadTeacherData(); // Load TIG data
+        populateDropdown();      // Then set up the player
+        buildLessonSequence();
+        loadPage(0);
+    }
+
+    initializePlayer();
+});
