@@ -1,0 +1,605 @@
+{
+  "lesson_uuid": "cms-00001-srb",
+  "edition_type": "clearmath_secondary",
+  "lesson_type": "concept",
+  "lesson_audience": "stu",
+  "lesson_labels": [
+    {
+      "title": "Session",
+      "suffix": "1"
+    }
+  ],
+  "lesson_metadata": {
+    "lesson_title": "A Picture Is Worth a Thousand Words",
+    "lesson_subtitle": "Understanding Quantities and Their Relationships"
+  },
+  "lesson_overview_items": [
+    {
+      "uuid": "lg-graphing-skills-a1b2c3",
+      "feature_type": "learning_goals",
+      "feature_title": "My Learning Goals",
+      "feature_data": {
+        "data_type": "rich_text_list",
+        "items": [
+          "I can use a reasonable scale for a graph modeling a situation.",
+          "I can identify the independent and dependent quantities for a situation.",
+          "I can identify key characteristics of graphs."
+        ]
+      }
+    },
+    {
+      "uuid": "bi-func-invest-d4e5f6",
+      "feature_type": "big_ideas",
+      "feature_title": "Big Ideas",
+      "feature_data": {
+        "data_type": "list",
+        "items": [
+          "Function Investigations",
+          "Features of Functions"
+        ]
+      }
+    },
+    {
+      "uuid": "mc-analyzed-graphs-g7h8i9",
+      "feature_type": "make_a_connection",
+      "feature_title": "Make A Connection",
+      "feature_data": {
+        "data_type": "rich_text",
+        "content": "You have analyzed graphs of relationships and identified important features such as intercepts and slopes."
+      }
+    },
+    {
+      "uuid": "lp-graph-story-j0k1l2",
+      "feature_type": "learning_prompt",
+      "feature_title": "Learning Prompt",
+      "feature_content_type": "html",
+      "feature_data": {
+        "data_type": "rich_text",
+        "prompt_question": "How can the key characteristics of a graph tell a story?",
+        "prompt_answer": "When one quantity depends on another, it is a dependent quantity. The quantity it depends upon is the independent quantity. The independent quantity is represented on the <em>x</em>-axis, and the dependent quantity is represented on the <em>y</em>-axis."
+      }
+    }
+  ],
+  "lesson_content_sessions": [
+    {
+      "session": 1,
+      "features": [
+        {
+            "uuid": "slide-break-initial",
+            "feature_type": "slide_break",
+            "feature_title": "Slide Break",
+            "feature_data": { "data_type": "slide_break" }
+        },
+        {
+          "uuid": "stu-l1-activate-def2",
+          "feature_type": "activate_block",
+          "feature_title": "Activate",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "prompt",
+            "mode": "presentation",
+            "title": "What Comes First?",
+            "text": "<p>Consider the situation and quantity pairs shared by your teacher. Prepare to share your thinking with your classmates.</p>"
+          }
+        },
+        {
+          "uuid": "explore-develop-header",
+          "feature_type": "block_header",
+          "feature_title": "Explore and Develop",
+          "feature_data": { 
+            "data_type": "static_header",
+            "mode": "book"
+           }
+        },
+        {
+          "uuid": "stu-l1-activity1-mno5",
+          "feature_type": "activity_header",
+          "feature_title": "Connecting Situations and Their Graphs",
+          "feature_data": {
+            "data_type": "activity_header",
+            "activity_number": 1
+          }
+        },
+        {
+          "uuid": "stu-l1-richtext-pqr6",
+          "feature_type": "instructional_text",
+          "feature_title": "Instructional Text",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "rich_text",
+            "content": "<p>Graphs relay information about relationships in a visual way. You can use lines or smooth curves to represent relationships between points on a graph. In some problem situations, all the points on the line will make sense. In other problem situations, not all the points will make sense. So, when you model a relationship with a line or a curve, it is up to you to consider the situation and interpret the meaning of the data values.</p>"
+          }
+        },
+        {
+          "uuid": "stu-l1-directions-line-stu7a",
+          "feature_type": "directions_line",
+          "feature_title": "Direction Line",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "rich_text",
+            "content": "<p>Cut out the graphs provided by your teacher. Then, read each of the six situations in this activity.</p>"
+          }
+        },
+        {
+          "uuid": "stu-l1-activity-steps-stu7b",
+          "feature_type": "activity_steps",
+          "feature_title": "Activity Steps",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "rich_text_list",
+            "items": [
+              "Determine the independent and dependent quantities.",
+              "Match each situation to its corresponding graph. Glue the graph next to the situation.",
+              "For each graph, label the <em>x</em>- and <em>y</em>-axis with the appropriate quantity and a reasonable scale, and then interpret the meaning of the origin."
+            ]
+          }
+        },
+        {
+          "uuid": "stu-l1-callout-vwx8",
+          "feature_type": "habits_of_mind",
+          "feature_title": "Habits of Mind",
+          "feature_data": {
+            "data_type": "list",
+            "items": [
+              "Model with mathematics.",
+              "Use appropriate tools strategically."
+            ]
+          }
+        },
+        {
+          "uuid": "prob-daredevil-9c3e8a",
+          "feature_type": "assessment_item",
+          "feature_title": "1. Daredevil",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "qti_assessment_item",
+            "response_declarations": [
+              { "identifier": "RESPONSE_INDEPENDENT", "correct_response": "Time (seconds)" },
+              { "identifier": "RESPONSE_DEPENDENT", "correct_response": "Jared’s height above the water (feet)" },
+              { "identifier": "RESPONSE_ORIGIN", "correct_response": "(0 seconds, 0 feet above the water)" }
+            ],
+            "item_body": {
+              "stem": "<p>Jared completes a dive from a cliff 100-feet above a river. It takes him only 1.7 seconds to hit the water.</p>",
+              "interactions": [
+                { "response_identifier": "RESPONSE_INDEPENDENT", "prompt": "Independent quantity:" },
+                { "response_identifier": "RESPONSE_DEPENDENT", "prompt": "Dependent quantity:" },
+                { "response_identifier": "RESPONSE_ORIGIN", "prompt": "Origin:" }
+              ]
+            },
+            "ancillary_content": {
+              "think_about": "<p>Be sure to include the appropriate units of measure for each quantity.</p>",
+              "graphic": { "image_id": "sm5e_a1_m01_t01_l01_graph_e.svg", "alt_text": "A graph titled 'Graph E' showing a downward curving line.", "caption": "Graph E" }
+            }
+          }
+        },
+        {
+          "uuid": "prob-fishy-bcd10",
+          "feature_type": "assessment_item",
+          "feature_title": "2. Something’s Fishy",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "qti_assessment_item",
+            "response_declarations": [
+                { "identifier": "RESPONSE_INDEPENDENT", "correct_response": "Time (minutes)" },
+                { "identifier": "RESPONSE_DEPENDENT", "correct_response": "Water (gallons)" },
+                { "identifier": "RESPONSE_ORIGIN", "correct_response": "(0 minutes, 0 gallons of water)" }
+            ],
+            "item_body": {
+                "stem": "<p>Parker is cleaning a 200-gallon office aquarium. She removes the fish and drains the water at a constant rate of 10 gallons per minute.</p>",
+                "interactions": [
+                    { "response_identifier": "RESPONSE_INDEPENDENT", "prompt": "Independent quantity:" },
+                    { "response_identifier": "RESPONSE_DEPENDENT", "prompt": "Dependent quantity:" },
+                    { "response_identifier": "RESPONSE_ORIGIN", "prompt": "Origin:" }
+                ]
+            },
+            "ancillary_content": {
+                "ask_yourself": "<p>What strategies will you use to match each graph with one of the six situations?</p>",
+                "graphic": { "image_id": "sm5e_a1_m01_t01_l01_graph_f.svg", "alt_text": "A graph titled 'Graph F' showing a straight line decreasing.", "caption": "Graph F" }
+            }
+          }
+        },
+        {
+          "uuid": "prob-smartphone-efg11",
+          "feature_type": "assessment_item",
+          "feature_title": "3. Smart Phone, But Is It a Smart Deal?",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "qti_assessment_item",
+            "response_declarations": [
+                { "identifier": "RESPONSE_INDEPENDENT", "correct_response": "Time (weeks)" },
+                { "identifier": "RESPONSE_DEPENDENT", "correct_response": "Interest (dollars)" },
+                { "identifier": "RESPONSE_ORIGIN", "correct_response": "(0 weeks, 0 dollars of interest)" }
+            ],
+            "item_body": {
+                "stem": "<p>You want an upgraded smartphone but lack the funds. Your cousin offers to lend you the money with interest, starting at $1 and doubling weekly. You wonder if it’s a good deal.</p>",
+                "interactions": [
+                    { "response_identifier": "RESPONSE_INDEPENDENT", "prompt": "Independent quantity:" },
+                    { "response_identifier": "RESPONSE_DEPENDENT", "prompt": "Dependent quantity:" },
+                    { "response_identifier": "RESPONSE_ORIGIN", "prompt": "Origin:" }
+                ]
+            },
+            "ancillary_content": {
+                "graphic": { "image_id": "sm5e_a1_m01_t01_l01_graph_b.svg", "alt_text": "A graph titled 'Graph B' showing an upward curving exponential line.", "caption": "Graph B" }
+            }
+          }
+        },
+        {
+          "uuid": "prob-baton-hij12",
+          "feature_type": "assessment_item",
+          "feature_title": "4. Baton Twirling",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "qti_assessment_item",
+            "response_declarations": [
+                { "identifier": "RESPONSE_INDEPENDENT", "correct_response": "Time (seconds)" },
+                { "identifier": "RESPONSE_DEPENDENT", "correct_response": "Height of baton (feet)" },
+                { "identifier": "RESPONSE_ORIGIN", "correct_response": "(0 seconds, height of 0 feet)" }
+            ],
+            "item_body": {
+                "stem": "<p>Juniper, the Altadena High drum major, tosses her baton 22 feet high during the halftime finale, giving her 2 seconds to twirl twice and catch it.</p>",
+                "interactions": [
+                    { "response_identifier": "RESPONSE_INDEPENDENT", "prompt": "Independent quantity:" },
+                    { "response_identifier": "RESPONSE_DEPENDENT", "prompt": "Dependent quantity:" },
+                    { "response_identifier": "RESPONSE_ORIGIN", "prompt": "Origin:" }
+                ]
+            },
+            "ancillary_content": {
+                "graphic": { "image_id": "sm5e_a1_m01_t01_l01_graph_d.svg", "alt_text": "A graph titled 'Graph D' showing a parabolic curve.", "caption": "Graph D" }
+            }
+          }
+        },
+        {
+          "uuid": "prob-cold-weather-klm13",
+          "feature_type": "assessment_item",
+          "feature_title": "5. Cold Weather",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "qti_assessment_item",
+            "response_declarations": [
+                { "identifier": "RESPONSE_INDEPENDENT", "correct_response": "Temperature (°F)" },
+                { "identifier": "RESPONSE_DEPENDENT", "correct_response": "Number of guests" },
+                { "identifier": "RESPONSE_ORIGIN", "correct_response": "(0 degrees Fahrenheit, 0 number of guests)" }
+            ],
+            "item_body": {
+                "stem": "<p>The number of guests at a ski resort depends on the day’s high temperature. No one visits at -20°F or below. As temperatures rise, guests increase. At 0°F and above, attendance surges, reaching the 400-guest capacity at 10°F or higher.</p>",
+                "interactions": [
+                    { "response_identifier": "RESPONSE_INDEPENDENT", "prompt": "Independent quantity:" },
+                    { "response_identifier": "RESPONSE_DEPENDENT", "prompt": "Dependent quantity:" },
+                    { "response_identifier": "RESPONSE_ORIGIN", "prompt": "Origin:" }
+                ]
+            },
+            "ancillary_content": {
+                "graphic": { "image_id": "sm5e_a1_m01_t01_l01_graph_a.svg", "alt_text": "A graph titled 'Graph A' showing guests increasing with temperature.", "caption": "Graph A" }
+            }
+          }
+        },
+        {
+          "uuid": "prob-jelly-bean-nop14",
+          "feature_type": "assessment_item",
+          "feature_title": "6. Jelly Bean Challenge",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "qti_assessment_item",
+            "response_declarations": [
+                { "identifier": "RESPONSE_INDEPENDENT", "correct_response": "Number of jelly beans guessed" },
+                { "identifier": "RESPONSE_DEPENDENT", "correct_response": "Number of jelly beans the guess is off by" },
+                { "identifier": "RESPONSE_ORIGIN", "correct_response": "(0 jelly beans guessed, 0 jelly beans the guess is off by)" }
+            ],
+            "item_body": {
+                "stem": "<p>Mr. Vasquez judges the Jelly Bean Challenge at the summer fair, recording all possible guesses and how far each is from the actual count.</p>",
+                "interactions": [
+                    { "response_identifier": "RESPONSE_INDEPENDENT", "prompt": "Independent quantity:" },
+                    { "response_identifier": "RESPONSE_DEPENDENT", "prompt": "Dependent quantity:" },
+                    { "response_identifier": "RESPONSE_ORIGIN", "prompt": "Origin:" }
+                ]
+            },
+            "ancillary_content": {
+                "graphic": { "image_id": "sm5e_a1_m01_t01_l01_graph_c.svg", "alt_text": "A graph titled 'Graph C' showing a V-shape.", "caption": "Graph C" }
+            }
+          }
+        },
+        {
+            "uuid": "prob-compare-graphs-qrs15-instruction",
+            "feature_type": "instructional_text",
+            "feature_title": "Instructions for Item 7",
+            "feature_content_type": "html",
+            "feature_data": {
+                "data_type": "rich_text",
+                "content": "<p>Compare the graphs for each pair of situations given. Describe any similarities and differences you notice.</p>"
+            }
+        },
+        {
+            "uuid": "think-about-qrs15",
+            "feature_type": "think_about",
+            "feature_title": "Think About...",
+            "feature_content_type": "html",
+            "feature_data": {
+                "data_type": "rich_text",
+                "content": "<p>Look closely when analyzing the graphs. What do you see?</p>"
+            }
+        },
+        {
+            "uuid": "prob-compare-7a-qrs15a",
+            "feature_type": "assessment_item",
+            "feature_title": "7a. Smart Phone vs. Cold Weather",
+            "feature_content_type": "html",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_7A", "is_sample_answer": true, "correct_response": "<p>Both graphs increase from left to right.<br>The graph of the <em>Smart Phone, But Is It a Smart Deal?</em> situation is a smooth curve, but the graph of the <em>Cold Weather</em> situation is composed of two increasing and one constant line segments.</p>" }
+                ],
+                "item_body": {
+                    "stem": "",
+                    "interactions": [ { "response_identifier": "RESPONSE_7A", "prompt": "Smart Phone, But Is It a Smart Deal? and Cold Weather"} ]
+                }
+            }
+        },
+        {
+            "uuid": "prob-compare-7b-qrs15b",
+            "feature_type": "assessment_item",
+            "feature_title": "7b. Something’s Fishy vs. Daredevil",
+            "feature_content_type": "html",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_7B", "is_sample_answer": true, "correct_response": "<p>Both graphs decrease from left to right.<br>The graph of the <em>Something’s Fishy</em> situation is a straight line, but the graph of the <em>Daredevil</em> situation is a smooth curve.</p>" }
+                ],
+                "item_body": {
+                    "stem": "",
+                    "interactions": [ { "response_identifier": "RESPONSE_7B", "prompt": "Something’s Fishy and Daredevil"} ]
+                }
+            }
+        },
+        {
+            "uuid": "prob-compare-7c-qrs15c",
+            "feature_type": "assessment_item",
+            "feature_title": "7c. Baton Twirling vs. Jelly Bean Challenge",
+            "feature_content_type": "html",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_7C", "is_sample_answer": true, "correct_response": "<p>The graphs have either a minimum or a maximum value. Both graphs increase and decrease.<br>The graph of the <em>Baton Twirling</em> situation is a smooth curve, but the graph of the <em>Jelly Bean Challenge</em> situation is made up of two straight lines.</p>" }
+                ],
+                "item_body": {
+                    "stem": "",
+                    "interactions": [ { "response_identifier": "RESPONSE_7C", "prompt": "Baton Twirling and Jelly Bean Challenge"} ]
+                }
+            }
+        },
+        {
+          "uuid": "reflect-header",
+          "feature_type": "block_header",
+          "feature_title": "Reflect",
+          "feature_data": { 
+            "data_type": "static_header",
+            "mode": "book"
+           }
+        },
+        {
+          "uuid": "stu-l1-reflectact1-wxy17",
+          "feature_type": "activity_header",
+          "feature_title": "A Writer and a Mathematician",
+          "feature_data": { 
+            "data_type": "activity_header"
+          }
+        },
+        {
+          "uuid": "stu-l1-problem-1-18",
+          "feature_type": "problem",
+          "feature_title": "1.",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "problem",
+            "content": "<p>Write a situation and sketch a graph to describe a possible trip to school.</p>",
+            "answer": {
+                "is_sample_answer": true,
+                "content": "<p>I walk half a mile to school in 10 minutes. Then, I stop to talk to a friend and tie my shoes for 5 minutes. I walk the remaining half-mile to school in 10 minutes.</p>",
+                "image": { "image_id": "sm5e_a1_m01_t01_l01_reflect_graph.svg", "alt_text": "A graph showing distance traveled versus time.", "caption": "Graph" }
+            }
+          }
+        },
+        {
+          "uuid": "stu-l1-problem-2-19",
+          "feature_type": "problem",
+          "feature_title": "2.",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "problem",
+            "content": "<p>Describe the meaning of the points, or smooth curve, represented by your graph.</p>",
+            "answer": {
+                "is_sample_answer": true,
+                "content": "<p>Each point on the graph represents possible times and the corresponding distances.</p>"
+            }
+          }
+        },
+        {
+          "uuid": "stu-l1-problem-3-20",
+          "feature_type": "problem",
+          "feature_title": "3.",
+          "feature_content_type": "html",
+          "feature_data": {
+            "data_type": "problem",
+            "content": "<p>Compare your situation and sketch with your classmates’ situations and sketches. What similarities do you notice? What differences do you notice?</p>",
+            "answer": {
+                "content": "<p>Answers will vary.</p>"
+            }
+          }
+        },
+        {
+            "uuid": "practice-apply-header",
+            "feature_type": "block_header",
+            "feature_title": "Practice and Apply",
+            "feature_data": { "data_type": "static_header" }
+        },
+        {
+            "uuid": "stu-l1-practiceact1-cde22",
+            "feature_type": "activity_header",
+            "feature_title": "Independent Practice",
+            "feature_data": { "data_type": "activity_header" }
+        },
+        {
+            "uuid": "stu-l1-practice-directions-fgh23",
+            "feature_type": "directions",
+            "feature_title": "Directions",
+            "feature_content_type": "html",
+            "feature_data": {
+              "data_type": "rich_text",
+              "content": "<p>Determine the independent and dependent quantities in each situation. Be sure to include the appropriate units of measure for each quantity.</p>"
+            }
+        },
+        {
+            "uuid": "practice-prob-1",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 1",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Time (hours)" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Number of pages read" }
+                ],
+                "item_body": {
+                    "stem": "<p>Baila reads a 300-page book at a rate of 20 pages per hour.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "practice-prob-2",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 2",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Number of cars washed" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Cost (dollars)" }
+                ],
+                "item_body": {
+                    "stem": "<p>A car wash business charges $15 per car for a basic wash.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "practice-prob-3",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 3",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Time (minutes)" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Volume of water consumed (liters)" }
+                ],
+                "item_body": {
+                    "stem": "<p>Ashley drinks water at a steady rate of 0.5 liters per 15 minutes while hiking.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "practice-prob-4",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 4",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Number of loans" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Time (weeks)" }
+                ],
+                "item_body": {
+                    "stem": "<p>A library allows users to borrow books for 2 weeks per loan period.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "practice-prob-5",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 5",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Number of tickets purchased" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Cost (dollars)" }
+                ],
+                "item_body": {
+                    "stem": "<p>A group of friends purchases tickets to a concert. Tickets cost $75 each.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "practice-prob-6",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 6",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Time (minutes)" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Volume of water in the pool (gallons)" }
+                ],
+                "item_body": {
+                    "stem": "<p>A hose fills a swimming pool at a rate of 8 gallons per minute.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "practice-prob-7",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 7",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Time (hours)" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Temperature change (degrees Fahrenheit)" }
+                ],
+                "item_body": {
+                    "stem": "<p>The temperature drops 2 degrees Fahrenheit per hour overnight.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "practice-prob-8",
+            "feature_type": "assessment_item",
+            "feature_title": "Practice 8",
+            "feature_data": {
+                "data_type": "qti_assessment_item",
+                "response_declarations": [
+                    { "identifier": "RESPONSE_INDEP", "correct_response": "Number of rental days" },
+                    { "identifier": "RESPONSE_DEP", "correct_response": "Cost (dollars)" }
+                ],
+                "item_body": {
+                    "stem": "<p>A construction company rents a bulldozer for $150 per day.</p>",
+                    "interactions": [
+                        { "response_identifier": "RESPONSE_INDEP", "prompt": "Independent quantity:" },
+                        { "response_identifier": "RESPONSE_DEP", "prompt": "Dependent quantity:" }
+                    ]
+                }
+            }
+        }
+      ]
+    }
+  ]
+}
