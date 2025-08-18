@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Lesson Player</title>
+    <title>Lesson Player with Teacher Support</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,13 +11,16 @@
         <header id="player-header">
             <h1 id="player-title">Lesson Title</h1>
             <div id="controls">
-                 <!-- The dropdown can be removed or repurposed later if needed -->
+                <label for="activate-select">Select an Activate Activity:</label>
+                <select id="activate-select"></select>
             </div>
             <button id="teacher-btn">Teacher Support</button>
         </header>
 
-        <!-- The iframe is gone, replaced by a div for dynamic content -->
-        <main id="content-window"></main>
+        <main id="content-window">
+            <!-- The iframe for student XHTML content is back -->
+            <iframe id="content-frame" src="" title="Lesson Content"></iframe>
+        </main>
 
         <footer id="player-navigation">
             <button id="prev-btn">&laquo; Previous</button>
@@ -38,8 +41,7 @@
     </div>
     <div id="pane-backdrop"></div>
 
-
-    <!-- IMPORTANT: Load config.js BEFORE script.js -->
+    <!-- Load config.js BEFORE script.js -->
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>

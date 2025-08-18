@@ -9,14 +9,6 @@
     background-color: #218838;
 }
 
-/* Main content window styling */
-#content-window {
-    padding: 20px;
-    overflow-y: auto; /* Allow scrolling for long content */
-    font-family: Georgia, serif;
-    line-height: 1.6;
-}
-
 /* Teacher Pane Styling */
 #teacher-pane {
     position: fixed;
@@ -46,10 +38,7 @@
     flex-shrink: 0;
 }
 
-.pane-header h2 {
-    margin: 0;
-    font-size: 1.1rem;
-}
+.pane-header h2 { margin: 0; font-size: 1.1rem; }
 
 #close-pane-btn {
     font-size: 1.8rem;
@@ -83,23 +72,16 @@
     display: block;
 }
 
-/* Simple styling for rendered content */
-.feature-card {
+/* Simple styling for rendered teacher notes */
+.support-item {
     border: 1px solid #eee;
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 20px;
     background: #fdfdfd;
 }
-.feature-card h3 {
+.support-item h4 {
     margin-top: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #0056b3;
-}
-.feature-card h4 {
-    font-size: 1rem;
-    color: #333;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
 }
