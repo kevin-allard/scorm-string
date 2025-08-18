@@ -2,8 +2,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. DATA STRUCTURE (from CSV) ---
     // This defines the student-facing lesson sequence
-    const lessonData = { /* ... (same as before) ... */ };
-    const activateActivities = { /* ... (same as before) ... */ };
+    const lessonData = {
+        'Lesson Overview': [
+            { file: '378289.xhtml', folder: 'Lesson Overview' }
+        ],
+        'Explore and Develop': [
+            { file: '305773.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
+            { file: '309877.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
+            { file: '309883.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
+            { file: '309888.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
+            { file: '309893.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
+            { file: '309991.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
+            { file: '309992.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' }
+        ],
+        'Reflect': [
+            { file: '310074.xhtml', folder: 'The Floor Is Yours' },
+            { file: '310076.xhtml', folder: 'The Floor Is Yours' }
+        ],
+        'Interactive Journal': [
+            { file: '308552.xhtml', folder: 'Interactive Journal' }
+        ]
+    };
+
+    const activateActivities = {
+        'Piles of Tiles (Money/Bills)': [
+            { file: '294860.xhtml', folder: 'Piles of Tiles (Money:Bills)' },
+            { file: '294861.xhtml', folder: 'Piles of Tiles (Money:Bills)' }
+        ],
+        'Piles of Tiles (Basketball)': [
+            { file: '294864.xhtml', folder: 'Piles of Tiles (Basketball)' },
+            { file: '294865.xhtml', folder: 'Piles of Tiles (Basketball)' }
+        ],
+        'Piles of Tiles (Garden Bed)': [
+            { file: '294868.xhtml', folder: 'Piles of Tiles (Garden Bed)' },
+            { file: '294869.xhtml', folder: 'Piles of Tiles (Garden Bed)' }
+        ],
+        'Piles of Tiles (Tile Floor)': [
+            { file: '294872.xhtml', folder: 'Piles of Tiles (Tile Floor)' },
+            { file: '294873.xhtml', folder: 'Piles of Tiles (Tile Floor)' }
+        ]
+    };
 
     // --- 2. STATE & DATA ---
     let currentPageIndex = 0;
@@ -13,9 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. DOM ELEMENT REFERENCES ---
     const iframe = document.getElementById('content-frame');
     const playerTitle = document.getElementById('player-title');
-    // ... (prevBtn, nextBtn, pageIndicator, activateSelect are the same)
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pageIndicator = document.getElementById('page-indicator');
+    const activateSelect = document.getElementById('activate-select');
     
-    // New references for the teacher pane
+    // NEW references for the teacher pane
     const teacherBtn = document.getElementById('teacher-btn');
     const teacherPane = document.getElementById('teacher-pane');
     const closePaneBtn = document.getElementById('close-pane-btn');
@@ -27,13 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(CONFIG.teacherDataPath);
             teacherLessonData = await response.json();
-            console.log("Teacher data loaded successfully.");
         } catch (error) {
             console.error("Failed to load teacher data:", error);
+            // Optionally display an error to the user in the pane
+            paneContent.innerHTML = `<p style="color: red;">Error loading teacher support file.</p>`;
         }
     }
 
-    // --- 5. CORE PLAYER LOGIC (with modifications) ---
+    // --- 5. CORE PLAYER LOGIC ---
     
     /**
      * MODIFIED: Adds a 'genericBlock' property for linking to TIG data.
@@ -53,17 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedActivatePages = mapPages(activateBlockTitle, activateActivities[selectedActivateKey], 'Activate');
 
         currentLessonPages = [
-            ...mapPages('Lesson Overview', lessonData['Lesson Overview'], 'Lesson Overview'),
+            ...mapPages('Lesson Overview', lessonData['Lesson Overview'], 'Lesson Overview'), // Note: No TIG equivalent, pane will be empty
             ...selectedActivatePages,
             ...mapPages('Explore and Develop', lessonData['Explore and Develop'], 'Explore and Develop'),
             ...mapPages('Reflect', lessonData['Reflect'], 'Reflect'),
-            ...mapPages('Interactive Journal', lessonData['Interactive Journal'], 'Interactive Journal')
+            ...mapPages('Interactive Journal', lessonData['Interactive Journal'], 'Interactive Journal') // Note: No TIG equivalent, pane will be empty
         ];
     }
     
-    /**
-     * MODIFIED: Now triggers an update of the teacher pane on page load.
-     */
     function loadPage(index) {
         if (index < 0 || index >= currentLessonPages.length) return;
         
@@ -73,24 +112,39 @@ document.addEventListener('DOMContentLoaded', () => {
         
         iframe.src = filePath;
         updateUI();
-        updateTeacherPane(); // ** NEW **
+        updateTeacherPane();
     }
 
     function updateUI() {
-        // ... (this function is the same as before)
-        // It updates the page indicator, nav buttons, and main title
+        pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${currentLessonPages.length}`;
+        prevBtn.disabled = (currentPageIndex === 0);
+        nextBtn.disabled = (currentPageIndex === currentLessonPages.length - 1);
+        if (currentLessonPages.length > 0) {
+            playerTitle.textContent = currentLessonPages[currentPageIndex].block;
+        }
+    }
+
+    function populateDropdown() {
+        Object.keys(activateActivities).forEach(key => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = key;
+            activateSelect.appendChild(option);
+        });
     }
     
-    // --- 6. TEACHER PANE LOGIC (NEW) ---
+    // --- 6. TEACHER PANE LOGIC (NEW SECTION) ---
     
-    /**
-     * Finds and renders teacher support for the current lesson block.
-     */
     function updateTeacherPane() {
-        if (!teacherLessonData) return;
+        if (!teacherLessonData) {
+            paneContent.innerHTML = `<p>Teacher support data is not available.</p>`;
+            return;
+        };
+
         paneContent.innerHTML = ''; // Clear old notes
 
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
+        // Assuming all support items are in the first session
         const allSupportItems = teacherLessonData.lesson_support_sessions[0].support_items;
 
         const relevantSupportItems = allSupportItems.filter(item => 
@@ -98,69 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         if (relevantSupportItems.length === 0) {
-            paneContent.innerHTML = `<p>No specific support notes for this section.</p>`;
+            paneContent.innerHTML = `<p>No specific support notes for this lesson block.</p>`;
         } else {
             relevantSupportItems.forEach(item => {
-                const supportHtml = renderSupportItem(item);
-                paneContent.appendChild(supportHtml);
+                const supportEl = renderSupportItem(item);
+                paneContent.appendChild(supportEl);
             });
         }
     }
 
-    /**
-     * Renders a single teacher support item into an HTML element.
-     */
     function renderSupportItem(item) {
-        const el = document.createElement('div');
-        el.className = 'support-item';
-        let content = `<h4>${item.feature_title}</h4>`;
-        const data = item.feature_data;
-
-        if (data.purpose) content += `<p><strong>Purpose:</strong> ${data.purpose}</p>`;
-
-        if (data.steps) {
-            content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
-        } else if (data.text) {
-             content += data.text;
-        } else if (data.questions) {
-             content += '<ul>' + data.questions.map(q => `<li>${q}</li>`).join('') + '</ul>';
-        }
-        el.innerHTML = content;
-        return el;
-    }
-
-    /**
-     * Toggles the visibility of the teacher pane.
-     */
-    function toggleTeacherPane(show) {
-        if (show) {
-            teacherPane.classList.add('is-open');
-            paneBackdrop.classList.add('is-visible');
-        } else {
-            teacherPane.classList.remove('is-open');
-            paneBackdrop.classList.remove('is-visible');
-        }
-    }
-
-    // --- 7. EVENT LISTENERS ---
-    // ... (nextBtn, prevBtn, activateSelect listeners are the same)
-
-    // New listeners for the pane
-    teacherBtn.addEventListener('click', () => toggleTeacherPane(true));
-    closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
-    paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
-    
-    // --- 8. INITIALIZATION ---
-    async function initializePlayer() {
-        await loadTeacherData(); // Load TIG data first
-        populateDropdown();
-        buildLessonSequence();
-        loadPage(0);
-    }
-    
-    // Make sure to copy over all the unchanged functions like populateDropdown, 
-    // the event listeners, and the data objects from the previous correct script.
-    // I am omitting them here for brevity but they are required.
-
-    initializePlayer();
-});
+        const el = d
