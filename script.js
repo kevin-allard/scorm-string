@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
         'Explore and Develop': [
             { file: '305773.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '305877.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
+            // ** TYPO FIXED HERE **: Changed 305877.xhtml to 309877.xhtml
+            { file: '309877.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
             { file: '309883.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
             { file: '309888.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
             { file: '309893.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
@@ -25,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const activateActivities = {
         'Piles of Tiles (Money/Bills)': [
-            // ** THE ONLY CHANGE IS HERE **
             { file: '294860.xhtml', folder: 'Piles of Tiles (Money:Bills)' },
             { file: '294861.xhtml', folder: 'Piles of Tiles (Money:Bills)' }
         ],
@@ -67,7 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }));
         };
         
-        const selectedActivatePages = mapPages(selectedActivateKey, activateActivities[selectedActivateKey]);
+        // ** TITLE FORMAT UPDATED HERE **: Added "Activate: " prefix to the block title.
+        const activateBlockTitle = `Activate: ${selectedActivateKey}`;
+        const selectedActivatePages = mapPages(activateBlockTitle, activateActivities[selectedActivateKey]);
 
         currentLessonPages = [
             ...mapPages('Lesson Overview', lessonData['Lesson Overview']),
