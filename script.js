@@ -1,139 +1,203 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. DATA STRUCTURE ---
-    const lessonData = {
-        'Lesson Overview': [
-            { file: '378289.xhtml', folder: 'Lesson Overview' }
-        ],
-        'Explore and Develop': [
-            { file: '305773.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            // ** TYPO FIXED HERE **: Changed 305877.xhtml to 309877.xhtml
-            { file: '309877.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309883.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309888.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309893.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309991.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309992.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' }
-        ],
-        'Reflect': [
-            { file: '310074.xhtml', folder: 'The Floor Is Yours' },
-            { file: '310076.xhtml', folder: 'The Floor Is Yours' }
-        ],
-        'Interactive Journal': [
-            { file: '308552.xhtml', folder: 'Interactive Journal' }
-        ]
-    };
-
-    const activateActivities = {
-        'Piles of Tiles (Money/Bills)': [
-            { file: '294860.xhtml', folder: 'Piles of Tiles (Money:Bills)' },
-            { file: '294861.xhtml', folder: 'Piles of Tiles (Money:Bills)' }
-        ],
-        'Piles of Tiles (Basketball)': [
-            { file: '294864.xhtml', folder: 'Piles of Tiles (Basketball)' },
-            { file: '294865.xhtml', folder: 'Piles of Tiles (Basketball)' }
-        ],
-        'Piles of Tiles (Garden Bed)': [
-            { file: '294868.xhtml', folder: 'Piles of Tiles (Garden Bed)' },
-            { file: '294869.xhtml', folder: 'Piles of Tiles (Garden Bed)' }
-        ],
-        'Piles of Tiles (Tile Floor)': [
-            { file: '294872.xhtml', folder: 'Piles of Tiles (Tile Floor)' },
-            { file: '294873.xhtml', folder: 'Piles of Tiles (Tile Floor)' }
-        ]
-    };
-
-    // --- 2. STATE MANAGEMENT ---
+    // --- 1. STATE MANAGEMENT ---
+    let studentLessonData = null;
+    let teacherLessonData = null;
+    let lessonPages = []; // Will be an array of arrays of "features"
     let currentPageIndex = 0;
-    let currentLessonPages = []; 
 
-    // --- 3. DOM ELEMENT REFERENCES ---
-    const iframe = document.getElementById('content-frame');
+    // --- 2. DOM ELEMENT REFERENCES ---
+    const playerTitle = document.getElementById('player-title');
+    const contentWindow = document.getElementById('content-window');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const pageIndicator = document.getElementById('page-indicator');
-    const activateSelect = document.getElementById('activate-select');
-    const playerTitle = document.getElementById('player-title');
+    const teacherBtn = document.getElementById('teacher-btn');
+    const teacherPane = document.getElementById('teacher-pane');
+    const closePaneBtn = document.getElementById('close-pane-btn');
+    const paneContent = document.getElementById('pane-content');
+    const paneBackdrop = document.getElementById('pane-backdrop');
 
-    // --- 4. CORE FUNCTIONS ---
+    // --- 3. DATA LOADING ---
+    async function loadLessonData() {
+        try {
+            const [studentResponse, teacherResponse] = await Promise.all([
+                fetch(CONFIG.studentDataPath),
+                fetch(CONFIG.teacherDataPath)
+            ]);
+            studentLessonData = await studentResponse.json();
+            teacherLessonData = await teacherResponse.json();
+        } catch (error) {
+            console.error("Failed to load lesson data:", error);
+            contentWindow.innerHTML = `<p style="color: red;">Error: Could not load lesson files. Please check the file paths in config.js and the browser console for details.</p>`;
+        }
+    }
 
+    // --- 4. LESSON STRUCTURE BUILDER ---
     function buildLessonSequence() {
-        const selectedActivateKey = activateSelect.value;
+        if (!studentLessonData) return;
 
-        const mapPages = (blockTitle, pages) => {
-            return pages.map(page => ({
-                ...page, 
-                block: blockTitle 
-            }));
-        };
+        lessonPages = [];
+        let currentPageFeatures = [];
         
-        // ** TITLE FORMAT UPDATED HERE **: Added "Activate: " prefix to the block title.
-        const activateBlockTitle = `Activate: ${selectedActivateKey}`;
-        const selectedActivatePages = mapPages(activateBlockTitle, activateActivities[selectedActivateKey]);
+        // We assume all content is in the first session for this example
+        const features = studentLessonData.lesson_content_sessions[0].features;
 
-        currentLessonPages = [
-            ...mapPages('Lesson Overview', lessonData['Lesson Overview']),
-            ...selectedActivatePages,
-            ...mapPages('Explore and Develop', lessonData['Explore and Develop']),
-            ...mapPages('Reflect', lessonData['Reflect']),
-            ...mapPages('Interactive Journal', lessonData['Interactive Journal'])
-        ];
+        for (const feature of features) {
+            if (feature.feature_type === 'slide_break' && currentPageFeatures.length > 0) {
+                lessonPages.push(currentPageFeatures);
+                currentPageFeatures = [];
+            } else {
+                 if (feature.feature_type !== 'slide_break') {
+                    currentPageFeatures.push(feature);
+                }
+            }
+        }
+        // Add the last page if it has content
+        if (currentPageFeatures.length > 0) {
+            lessonPages.push(currentPageFeatures);
+        }
     }
 
+    // --- 5. DYNAMIC CONTENT RENDERING ---
+
+    /**
+     * Main function to load a page of content
+     */
     function loadPage(index) {
-        if (index < 0 || index >= currentLessonPages.length) {
-            console.error("Attempted to load an out-of-bounds page index:", index);
-            return;
-        }
+        if (index < 0 || index >= lessonPages.length) return;
         currentPageIndex = index;
-        const pageInfo = currentLessonPages[currentPageIndex];
-        const filePath = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
+
+        const pageFeatures = lessonPages[currentPageIndex];
+        contentWindow.innerHTML = ''; // Clear previous content
+        pageFeatures.forEach(feature => {
+            const featureHtml = renderFeature(feature);
+            if (featureHtml) {
+                contentWindow.appendChild(featureHtml);
+            }
+        });
         
-        iframe.src = filePath;
         updateUI();
+        updateTeacherPane();
+        contentWindow.scrollTop = 0; // Scroll to top of new content
     }
 
-    function updateUI() {
-        pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${currentLessonPages.length}`;
-        prevBtn.disabled = (currentPageIndex === 0);
-        nextBtn.disabled = (currentPageIndex === currentLessonPages.length - 1);
-        if (currentLessonPages.length > 0) {
-            playerTitle.textContent = currentLessonPages[currentPageIndex].block;
+    /**
+     * Renders a single student feature into an HTML element
+     */
+    function renderFeature(feature) {
+        const el = document.createElement('div');
+        el.className = `feature-card feature-${feature.feature_type}`;
+        
+        let content = `<h3>${feature.feature_title}</h3>`;
+        const data = feature.feature_data;
+
+        switch (feature.feature_type) {
+            case 'block_header':
+                return null; // Don't render these as cards
+            case 'activate_block':
+            case 'instructional_text':
+                content += data.content || data.text;
+                break;
+            case 'assessment_item':
+                content += data.item_body.stem;
+                // You could add logic here to render inputs for interactions
+                break;
+            default:
+                // For unknown types, just show the title
+                break;
         }
+        el.innerHTML = content;
+        return el;
+    }
+
+    /**
+     * Finds and renders teacher support for the current page
+     */
+    function updateTeacherPane() {
+        if (!teacherLessonData) return;
+        paneContent.innerHTML = ''; // Clear old notes
+
+        const currentFeatureUuids = lessonPages[currentPageIndex].map(f => f.uuid);
+        const allSupportItems = teacherLessonData.lesson_support_sessions[0].support_items;
+
+        const relevantSupportItems = allSupportItems.filter(item => 
+            currentFeatureUuids.includes(item.linked_student_uuid)
+        );
+
+        if (relevantSupportItems.length === 0) {
+            paneContent.innerHTML = `<p>No specific support notes for this section.</p>`;
+        } else {
+            relevantSupportItems.forEach(item => {
+                const supportHtml = renderSupportItem(item);
+                paneContent.appendChild(supportHtml);
+            });
+        }
+    }
+
+    /**
+     * Renders a single teacher support item into an HTML element
+     */
+    function renderSupportItem(item) {
+        const el = document.createElement('div');
+        el.className = 'feature-card';
+        let content = `<h4>${item.feature_title} (${item.block})</h4>`;
+        const data = item.feature_data;
+
+        switch (item.feature_type) {
+            case 'facilitation_notes':
+                content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
+                break;
+            case 'purposeful_questions':
+                content += '<ul>';
+                data.items.forEach(q_set => {
+                    content += q_set.questions.map(q => `<li><strong>${q_set.question_type}:</strong> ${q}</li>`).join('');
+                });
+                content += '</ul>';
+                break;
+            case 'differentiation_strategy':
+                content += `<strong>${data.title}</strong>${data.text}`;
+                break;
+            default:
+                content += `<p>Note of type: ${item.feature_type}</p>`;
+                break;
+        }
+        el.innerHTML = content;
+        return el;
+    }
+
+    // --- 6. UI MANAGEMENT ---
+    function updateUI() {
+        playerTitle.textContent = studentLessonData?.lesson_metadata.lesson_title || "Lesson";
+        pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${lessonPages.length}`;
+        prevBtn.disabled = (currentPageIndex === 0);
+        nextBtn.disabled = (currentPageIndex === lessonPages.length - 1);
     }
     
-    function populateDropdown() {
-        Object.keys(activateActivities).forEach(key => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = key;
-            activateSelect.appendChild(option);
-        });
+    function toggleTeacherPane(show) {
+        if (show) {
+            teacherPane.classList.add('is-open');
+            paneBackdrop.classList.add('is-visible');
+        } else {
+            teacherPane.classList.remove('is-open');
+            paneBackdrop.classList.remove('is-visible');
+        }
     }
 
-    // --- 5. EVENT LISTENERS ---
-    nextBtn.addEventListener('click', () => {
-        if (currentPageIndex < currentLessonPages.length - 1) {
-            loadPage(currentPageIndex + 1);
+    // --- 7. EVENT LISTENERS ---
+    nextBtn.addEventListener('click', () => loadPage(currentPageIndex + 1));
+    prevBtn.addEventListener('click', () => loadPage(currentPageIndex - 1));
+    teacherBtn.addEventListener('click', () => toggleTeacherPane(true));
+    closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
+    paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
+
+    // --- 8. INITIALIZATION ---
+    async function initializePlayer() {
+        await loadLessonData();
+        if (studentLessonData && teacherLessonData) {
+            buildLessonSequence();
+            loadPage(0);
         }
-    });
-
-    prevBtn.addEventListener('click', () => {
-        if (currentPageIndex > 0) {
-            loadPage(currentPageIndex - 1);
-        }
-    });
-
-    activateSelect.addEventListener('change', () => {
-        buildLessonSequence();
-        loadPage(0);
-    });
-
-    // --- 6. INITIALIZATION ---
-    function initializePlayer() {
-        populateDropdown();
-        buildLessonSequence();
-        loadPage(0);
     }
 
     initializePlayer();

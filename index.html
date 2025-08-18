@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Player</title>
+    <title>Dynamic Lesson Player</title>
     <link rel="stylesheet" href="style.css">
-</head><body>
-
+</head>
+<body>
     <div id="player-container">
         <header id="player-header">
-            <h1 id="player-title">Lesson Player</h1>
+            <h1 id="player-title">Lesson Title</h1>
             <div id="controls">
-                <label for="activate-select">Select an Activate Activity:</label>
-                <select id="activate-select"></select>
+                 <!-- The dropdown can be removed or repurposed later if needed -->
             </div>
+            <button id="teacher-btn">Teacher Support</button>
         </header>
 
-        <main id="content-window">
-            <iframe id="content-frame" src="" title="Lesson Content"></iframe>
-        </main>
+        <!-- The iframe is gone, replaced by a div for dynamic content -->
+        <main id="content-window"></main>
 
         <footer id="player-navigation">
             <button id="prev-btn">&laquo; Previous</button>
@@ -27,6 +26,21 @@
         </footer>
     </div>
 
+    <!-- The Teacher Support Slide-Over Pane -->
+    <div id="teacher-pane">
+        <div class="pane-header">
+            <h2>Teacher Support</h2>
+            <button id="close-pane-btn">&times;</button>
+        </div>
+        <div id="pane-content">
+            <!-- Teacher notes will be dynamically inserted here -->
+        </div>
+    </div>
+    <div id="pane-backdrop"></div>
+
+
+    <!-- IMPORTANT: Load config.js BEFORE script.js -->
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
