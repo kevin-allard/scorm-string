@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. DATA STRUCTURE (Unchanged) ---
+    // --- 1. DATA STRUCTURE ---
     const lessonData = {
         'Lesson Overview': [
             { file: '378289.xhtml', folder: 'Lesson Overview' }
@@ -25,8 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const activateActivities = {
         'Piles of Tiles (Money/Bills)': [
-            { file: '294860.xhtml', folder: 'Piles of Tiles (Money/Bills)' },
-            { file: '294861.xhtml', folder: 'Piles of Tiles (Money/Bills)' }
+            // ** THE ONLY CHANGE IS HERE **
+            { file: '294860.xhtml', folder: 'Piles of Tiles (Money:Bills)' },
+            { file: '294861.xhtml', folder: 'Piles of Tiles (Money:Bills)' }
         ],
         'Piles of Tiles (Basketball)': [
             { file: '294864.xhtml', folder: 'Piles of Tiles (Basketball)' },
@@ -52,28 +53,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('next-btn');
     const pageIndicator = document.getElementById('page-indicator');
     const activateSelect = document.getElementById('activate-select');
-    // **NEW**: Add a reference to the title element
     const playerTitle = document.getElementById('player-title');
 
     // --- 4. CORE FUNCTIONS ---
 
-    /**
-     * **MODIFIED**: Builds the lesson sequence and adds the "Lesson Block" title to each page object.
-     */
     function buildLessonSequence() {
         const selectedActivateKey = activateSelect.value;
 
-        // Helper function to map pages and add the block title
         const mapPages = (blockTitle, pages) => {
             return pages.map(page => ({
-                ...page, // copy existing file and folder info
-                block: blockTitle // add the lesson block title
+                ...page, 
+                block: blockTitle 
             }));
         };
         
         const selectedActivatePages = mapPages(selectedActivateKey, activateActivities[selectedActivateKey]);
 
-        // Assemble the lesson in order, mapping each block
         currentLessonPages = [
             ...mapPages('Lesson Overview', lessonData['Lesson Overview']),
             ...selectedActivatePages,
@@ -83,9 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
     }
 
-    /**
-     * Loads a specific page into the iframe. (Unchanged)
-     */
     function loadPage(index) {
         if (index < 0 || index >= currentLessonPages.length) {
             console.error("Attempted to load an out-of-bounds page index:", index);
@@ -99,26 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI();
     }
 
-    /**
-     * **MODIFIED**: Updates navigation, page indicator, AND the main title.
-     */
     function updateUI() {
-        // Update page indicator text
         pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${currentLessonPages.length}`;
-
-        // Disable/enable buttons
         prevBtn.disabled = (currentPageIndex === 0);
         nextBtn.disabled = (currentPageIndex === currentLessonPages.length - 1);
-
-        // **NEW**: Update the main title with the current lesson block name
         if (currentLessonPages.length > 0) {
             playerTitle.textContent = currentLessonPages[currentPageIndex].block;
         }
     }
     
-    /**
-     * Populates the dropdown menu. (Unchanged)
-     */
     function populateDropdown() {
         Object.keys(activateActivities).forEach(key => {
             const option = document.createElement('option');
@@ -128,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. EVENT LISTENERS (Unchanged) ---
+    // --- 5. EVENT LISTENERS ---
     nextBtn.addEventListener('click', () => {
         if (currentPageIndex < currentLessonPages.length - 1) {
             loadPage(currentPageIndex + 1);
@@ -146,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPage(0);
     });
 
-    // --- 6. INITIALIZATION (Unchanged) ---
+    // --- 6. INITIALIZATION ---
     function initializePlayer() {
         populateDropdown();
         buildLessonSequence();
