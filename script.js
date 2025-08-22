@@ -1,156 +1,150 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. DATA STRUCTURE (from CSV) ---
-    // This defines the student-facing lesson sequence
-    const lessonData = {
-        'Lesson Overview': [
-            { file: '378289.xhtml', folder: 'Lesson Overview' }
-        ],
-        'Explore and Develop': [
-            { file: '305773.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309877.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309883.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309888.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309893.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309991.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' },
-            { file: '309992.xhtml', folder: 'Activity 1 Connecting Area Models and the Distributive Property' }
-        ],
-        'Reflect': [
-            { file: '310074.xhtml', folder: 'The Floor Is Yours' },
-            { file: '310076.xhtml', folder: 'The Floor Is Yours' }
-        ],
-        'Interactive Journal': [
-            { file: '308552.xhtml', folder: 'Interactive Journal' }
-        ]
-    };
-
-    const activateActivities = {
-        'Piles of Tiles (Money/Bills)': [
-            { file: '294860.xhtml', folder: 'Piles of Tiles (Money:Bills)' },
-            { file: '294861.xhtml', folder: 'Piles of Tiles (Money:Bills)' }
-        ],
-        'Piles of Tiles (Basketball)': [
-            { file: '294864.xhtml', folder: 'Piles of Tiles (Basketball)' },
-            { file: '294865.xhtml', folder: 'Piles of Tiles (Basketball)' }
-        ],
-        'Piles of Tiles (Garden Bed)': [
-            { file: '294868.xhtml', folder: 'Piles of Tiles (Garden Bed)' },
-            { file: '294869.xhtml', folder: 'Piles of Tiles (Garden Bed)' }
-        ],
-        'Piles of Tiles (Tile Floor)': [
-            { file: '294872.xhtml', folder: 'Piles of Tiles (Tile Floor)' },
-            { file: '294873.xhtml', folder: 'Piles of Tiles (Tile Floor)' }
-        ]
-    };
-
-    // --- 2. STATE & DATA ---
+    // --- 1. STATE & DATA ---
+    // NO MORE HARDCODED DATA. These will be filled from the JSON files.
+    let lessonManifest = null;
+    let teacherLessonData = null;
+    let currentLessonPages = [];
     let currentPageIndex = 0;
-    let currentLessonPages = []; 
-    let teacherLessonData = null; // To store the loaded TIG JSON
 
-    // --- 3. DOM ELEMENT REFERENCES ---
+    // --- 2. DOM ELEMENT REFERENCES ---
     const iframe = document.getElementById('content-frame');
+    const learnosityContainer = document.getElementById('learnosity-container');
     const playerTitle = document.getElementById('player-title');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const pageIndicator = document.getElementById('page-indicator');
     const activateSelect = document.getElementById('activate-select');
-    
-    // NEW references for the teacher pane
     const teacherBtn = document.getElementById('teacher-btn');
     const teacherPane = document.getElementById('teacher-pane');
     const closePaneBtn = document.getElementById('close-pane-btn');
     const paneContent = document.getElementById('pane-content');
     const paneBackdrop = document.getElementById('pane-backdrop');
 
-    // --- 4. DATA LOADING ---
-    async function loadTeacherData() {
+    // --- 3. DATA LOADING ---
+    async function loadAllData() {
         try {
-            const response = await fetch(CONFIG.teacherDataPath);
-            teacherLessonData = await response.json();
-        } catch (error) {
-            console.error("Failed to load teacher data:", error);
-            // Optionally display an error to the user in the pane
-            paneContent.innerHTML = `<p style="color: red;">Error loading teacher support file.</p>`;
+            const [manifestResponse, teacherResponse] = await Promise.all([
+                fetch('data/lesson-manifest.json'),
+                fetch(CONFIG.teacherDataPath) // From config.js
+            ]);
+            if (!manifestResponse.ok || !teacherResponse.ok) {
+                throw new Error('Failed to fetch one or more data files.');
+            }
+            lessonManifest = await manifestResponse.json();
+            teacherLessonData = await teacherResponse.json();
+        } catch (error)
+        {
+            console.error("Failed to load data files:", error);
+            // Display the user-facing error message
+            document.body.innerHTML = `<p style="color:red; font-family: sans-serif; padding: 20px;">ERROR: Could not load lesson-manifest.json or teacher data. Please check the file paths in your 'data' folder and the JSON format.</p>`;
         }
     }
 
-    // --- 5. CORE PLAYER LOGIC ---
-    
-    /**
-     * MODIFIED: Adds a 'genericBlock' property for linking to TIG data.
-     */
+    // --- 4. CORE PLAYER LOGIC ---
     function buildLessonSequence() {
-        const selectedActivateKey = activateSelect.value;
+        if (!lessonManifest) return;
+        currentLessonPages = [];
+        const selectedActivateOption = activateSelect.value;
 
-        const mapPages = (blockTitle, pages, genericBlockTitle) => {
-            return pages.map(page => ({
-                ...page, 
-                block: blockTitle,         // For the main display title
-                genericBlock: genericBlockTitle // For linking to TIG JSON
-            }));
-        };
-        
-        const activateBlockTitle = `Activate: ${selectedActivateKey}`;
-        const selectedActivatePages = mapPages(activateBlockTitle, activateActivities[selectedActivateKey], 'Activate');
-
-        currentLessonPages = [
-            ...mapPages('Lesson Overview', lessonData['Lesson Overview'], 'Lesson Overview'), // Note: No TIG equivalent, pane will be empty
-            ...selectedActivatePages,
-            ...mapPages('Explore and Develop', lessonData['Explore and Develop'], 'Explore and Develop'),
-            ...mapPages('Reflect', lessonData['Reflect'], 'Reflect'),
-            ...mapPages('Interactive Journal', lessonData['Interactive Journal'], 'Interactive Journal') // Note: No TIG equivalent, pane will be empty
-        ];
+        lessonManifest.blocks.forEach(block => {
+            if (block.title === 'Activate') {
+                const selectedActivity = block.options.find(opt => opt.title === selectedActivateOption);
+                if (selectedActivity) {
+                    selectedActivity.pages.forEach(page => {
+                        currentLessonPages.push({
+                            ...page,
+                            folder: selectedActivity.folder,
+                            block: `Activate: ${selectedActivity.title}`,
+                            genericBlock: 'Activate'
+                        });
+                    });
+                }
+            } else {
+                block.pages.forEach(page => {
+                    currentLessonPages.push({
+                        ...page,
+                        folder: page.folder || block.folder,
+                        block: block.title,
+                        genericBlock: block.title
+                    });
+                });
+            }
+        });
     }
-    
+
     function loadPage(index) {
         if (index < 0 || index >= currentLessonPages.length) return;
         
         currentPageIndex = index;
         const pageInfo = currentLessonPages[currentPageIndex];
-        const filePath = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
-        
-        iframe.src = filePath;
+
+        if (pageInfo.type === 'xhtml') {
+            iframe.style.display = 'block';
+            learnosityContainer.style.display = 'none';
+            learnosityContainer.innerHTML = '';
+            const filePath = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
+            iframe.src = filePath;
+        } else if (pageInfo.type === 'learnosity') {
+            iframe.style.display = 'none';
+            iframe.src = 'about:blank';
+            learnosityContainer.style.display = 'block';
+            renderLearnosityItem(pageInfo.item_reference);
+        }
+
         updateUI();
         updateTeacherPane();
     }
 
-    function updateUI() {
-        pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${currentLessonPages.length}`;
-        prevBtn.disabled = (currentPageIndex === 0);
-        nextBtn.disabled = (currentPageIndex === currentLessonPages.length - 1);
-        if (currentLessonPages.length > 0) {
-            playerTitle.textContent = currentLessonPages[currentPageIndex].block;
+    async function renderLearnosityItem(itemRef) {
+        learnosityContainer.innerHTML = `<span class="learnosity-item" data-reference='${JSON.stringify(itemRef)}'></span>`;
+        try {
+            const response = await fetch('/.netlify/functions/learnosity-init', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ item_reference: itemRef })
+            });
+            if (!response.ok) throw new Error('Server returned an error.');
+            
+            const signedRequest = await response.json();
+            LearnosityItems.init(signedRequest, {
+                readyListener() { console.log(`Learnosity item is ready!`); }
+            });
+        } catch (error) {
+            console.error('Error rendering Learnosity item:', error);
+            learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
         }
     }
 
-    function populateDropdown() {
-        Object.keys(activateActivities).forEach(key => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = key;
-            activateSelect.appendChild(option);
-        });
+    function updateUI() {
+        if (!currentLessonPages.length) return;
+        pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${currentLessonPages.length}`;
+        prevBtn.disabled = (currentPageIndex === 0);
+        nextBtn.disabled = (currentPageIndex === currentLessonPages.length - 1);
+        playerTitle.textContent = currentLessonPages[currentPageIndex].block;
     }
-    
-    // --- 6. TEACHER PANE LOGIC (NEW SECTION) ---
-    
+
+    function populateDropdown() {
+        if (!lessonManifest) return;
+        const activateBlock = lessonManifest.blocks.find(block => block.title === 'Activate');
+        if (activateBlock && activateBlock.options) {
+            activateSelect.innerHTML = '';
+            activateBlock.options.forEach(option => {
+                const optEl = document.createElement('option');
+                optEl.value = option.title;
+                optEl.textContent = option.title;
+                activateSelect.appendChild(optEl);
+            });
+        }
+    }
+
+    // --- 5. TEACHER PANE LOGIC (Complete) ---
     function updateTeacherPane() {
-        if (!teacherLessonData) {
-            paneContent.innerHTML = `<p>Teacher support data is not available.</p>`;
-            return;
-        };
-
-        paneContent.innerHTML = ''; // Clear old notes
-
+        if (!teacherLessonData || !currentLessonPages.length) return;
+        paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
-        // Assuming all support items are in the first session
         const allSupportItems = teacherLessonData.lesson_support_sessions[0].support_items;
-
-        const relevantSupportItems = allSupportItems.filter(item => 
-            item.block === currentGenericBlock
-        );
-
+        const relevantSupportItems = allSupportItems.filter(item => item.block === currentGenericBlock);
         if (relevantSupportItems.length === 0) {
             paneContent.innerHTML = `<p>No specific support notes for this lesson block.</p>`;
         } else {
@@ -166,9 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.className = 'support-item';
         let content = `<h4>${item.feature_title}</h4>`;
         const data = item.feature_data;
-
         if (data.purpose) content += `<p><strong>Purpose:</strong> ${data.purpose}</p>`;
-
         if (data.steps) {
             content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
         } else if (data.text) {
@@ -176,14 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (data.questions) {
              content += '<ul>' + data.questions.map(q => `<li>${q}</li>`).join('') + '</ul>';
         } else if (data.items && Array.isArray(data.items)) {
-            // Handle purposeful questions structure
             content += '<ul>';
             data.items.forEach(q_set => {
                 content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join('');
             });
             content += '</ul>';
         }
-        
         el.innerHTML = content;
         return el;
     }
@@ -198,35 +188,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 7. EVENT LISTENERS ---
-    nextBtn.addEventListener('click', () => {
-        if (currentPageIndex < currentLessonPages.length - 1) {
-            loadPage(currentPageIndex + 1);
-        }
-    });
-
-    prevBtn.addEventListener('click', () => {
-        if (currentPageIndex > 0) {
-            loadPage(currentPageIndex - 1);
-        }
-    });
-
+    // --- 6. EVENT LISTENERS ---
+    nextBtn.addEventListener('click', () => loadPage(currentPageIndex + 1));
+    prevBtn.addEventListener('click', () => loadPage(currentPageIndex - 1));
     activateSelect.addEventListener('change', () => {
         buildLessonSequence();
-        loadPage(0);
+        const firstActivateIndex = currentLessonPages.findIndex(p => p.genericBlock === 'Activate');
+        loadPage(firstActivateIndex >= 0 ? firstActivateIndex : 0);
     });
-
-    // New listeners for the pane
     teacherBtn.addEventListener('click', () => toggleTeacherPane(true));
     closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
     paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
-    
-    // --- 8. INITIALIZATION ---
+
+    // --- 7. INITIALIZATION ---
     async function initializePlayer() {
-        await loadTeacherData(); // Load TIG data
-        populateDropdown();      // Then set up the player
-        buildLessonSequence();
-        loadPage(0);
+        await loadAllData();
+        if (lessonManifest && teacherLessonData) {
+            populateDropdown();
+            buildLessonSequence();
+            loadPage(0);
+        }
+        // The error message is now displayed inside loadAllData if it fails
     }
 
     initializePlayer();
