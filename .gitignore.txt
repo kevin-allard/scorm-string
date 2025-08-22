@@ -1,0 +1,40 @@
+# ===================================================================
+# Node.js / npm Dependencies
+# ===================================================================
+# This folder is huge and is automatically recreated by 'npm install'.
+# Never commit this folder.
+node_modules/
+
+# Log files created by npm if something goes wrong.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# ===================================================================
+# Secrets & Environment Variables
+# ===================================================================
+# This file contains your secret Learnosity keys.
+# THIS IS THE MOST IMPORTANT LINE. NEVER COMMIT YOUR SECRETS.
+.env
+
+
+# ===================================================================
+# Operating System Files
+# ===================================================================
+# macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+
+
+# ===================================================================
+# Optional Build/Dist folders (Good Practice)
+# ===================================================================
+# In case you ever add a build step that creates output folders.
+build/
+dist/

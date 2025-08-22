@@ -20,7 +20,6 @@ body {
     min-height: 100vh;
 }
 
-/* --- ESSENTIAL PLAYER LAYOUT --- */
 #player-container {
     width: 95%;
     max-width: 1200px;
@@ -30,7 +29,6 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--border-color);
     overflow: hidden;
-    /* This flexbox setup is critical for the layout */
     display: flex;
     flex-direction: column;
 }
@@ -41,7 +39,7 @@ body {
     align-items: center;
     padding: 10px 20px;
     border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0; /* Prevents header from shrinking */
+    flex-shrink: 0;
 }
 
 #player-navigation {
@@ -51,145 +49,67 @@ body {
     padding: 10px 20px;
     border-top: 1px solid var(--border-color);
     background-color: var(--primary-bg);
-    flex-shrink: 0; /* Prevents footer from shrinking */
+    flex-shrink: 0;
 }
 
-/* --- THIS IS THE KEY FIX --- */
 #content-window {
-    flex-grow: 1; /* Allows this element to expand and fill all available space */
+    flex-grow: 1;
     background-color: #fff;
-    overflow: hidden; /* Important for the iframe */
+    overflow: hidden;
+    position: relative; /* Needed for positioning children */
 }
 
 #content-frame {
     width: 100%;
-    height: 100%; /* Makes the iframe fill the content-window */
+    height: 100%;
     border: none;
 }
-/* --- END OF KEY FIX --- */
 
-
-/* General UI Element Styling (Unchanged) */
-#player-header h1 {
-    font-size: 1.2rem;
-    margin: 0;
-}
-
-#controls label {
-    margin-right: 10px;
-    font-size: 0.9rem;
-}
-
-#controls select {
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-}
-
-#page-indicator {
-    font-weight: 500;
-    font-size: 0.9rem;
-}
+#player-header h1 { font-size: 1.2rem; margin: 0; }
+#controls label { margin-right: 10px; font-size: 0.9rem; }
+#controls select { padding: 5px; border-radius: 4px; border: 1px solid var(--border-color); }
+#page-indicator { font-weight: 500; font-size: 0.9rem; }
 
 button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    background-color: var(--button-bg);
-    color: white;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s ease;
+    padding: 8px 16px; border: none; border-radius: 4px; background-color: var(--button-bg);
+    color: white; cursor: pointer; font-size: 1rem; transition: background-color 0.2s ease;
 }
+button:hover { background-color: var(--button-hover-bg); }
+button:disabled { background-color: var(--button-disabled-bg); cursor: not-allowed; }
 
-button:hover {
-    background-color: var(--button-hover-bg);
-}
-
-button:disabled {
-    background-color: var(--button-disabled-bg);
-    cursor: not-allowed;
-}
-
-/* --- NEW TEACHER PANE STYLES --- */
-#teacher-btn {
-    background-color: #28a745;
-    margin-left: 20px;
-}
-#teacher-btn:hover {
-    background-color: #218838;
-}
+#teacher-btn { background-color: #28a745; margin-left: 20px; }
+#teacher-btn:hover { background-color: #218838; }
 
 #teacher-pane {
-    position: fixed;
-    top: 0;
-    right: -450px; /* Start off-screen */
-    width: 420px;
-    height: 100%;
-    background-color: #fff;
-    box-shadow: -4px 0 15px rgba(0,0,0,0.15);
-    z-index: 1000;
-    transition: right 0.3s ease-in-out;
-    display: flex;
-    flex-direction: column;
+    position: fixed; top: 0; right: -450px; width: 420px; height: 100%;
+    background-color: #fff; box-shadow: -4px 0 15px rgba(0,0,0,0.15); z-index: 1000;
+    transition: right 0.3s ease-in-out; display: flex; flex-direction: column;
 }
-
-#teacher-pane.is-open {
-    right: 0; /* Slide in */
-}
-
+#teacher-pane.is-open { right: 0; }
 .pane-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #f7f7f7;
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0;
+    display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;
+    background-color: #f7f7f7; border-bottom: 1px solid var(--border-color); flex-shrink: 0;
 }
-
 .pane-header h2 { margin: 0; font-size: 1.1rem; }
-
 #close-pane-btn {
-    font-size: 1.8rem;
-    font-weight: 300;
-    color: #666;
-    background: none;
-    border: none;
-    cursor: pointer;
-    line-height: 1;
+    font-size: 1.8rem; font-weight: 300; color: #666; background: none;
+    border: none; cursor: pointer; line-height: 1;
 }
-
-#pane-content {
-    padding: 20px;
-    overflow-y: auto;
-    flex-grow: 1;
-}
-
+#pane-content { padding: 20px; overflow-y: auto; flex-grow: 1; }
 #pane-backdrop {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.4);
-    z-index: 999;
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4); z-index: 999;
 }
-
-#pane-backdrop.is-visible {
-    display: block;
-}
+#pane-backdrop.is-visible { display: block; }
 
 .support-item {
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: #fdfdfd;
+    border: 1px solid #eee; border-radius: 6px; padding: 15px;
+    margin-bottom: 20px; background: #fdfdfd;
 }
-.support-item h4 {
-    margin-top: 0;
-    font-size: 1.1rem;
-    color: #0056b3;
+.support-item h4 { margin-top: 0; font-size: 1.1rem; color: #0056b3; }
+
+/* ADD THIS RULE FOR LEARNOSITY */
+#learnosity-container {
+    padding: 20px; height: 100%; width: 100%; box-sizing: border-box;
+    overflow-y: auto; display: none; /* Hide by default */
 }
