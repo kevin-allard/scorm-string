@@ -105,5 +105,5 @@
         }
       ]
     }
-  ] // <-- THIS CLOSING BRACKET WAS THE MISSING PIECE. It closes the "blocks" array.
+  ] 
 }
