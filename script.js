@@ -1,4 +1,4 @@
-// --- SCRIPT.JS WITH DEBUGGING LOGS ---
+// --- SCRIPT.JS - COMPLETE VERSION WITH ALL DECLARATIONS AND LOGS ---
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. STATE & DATA ---
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLessonPages = [];
     let currentPageIndex = 0;
 
-    // --- 2. DOM ELEMENT REFERENCES ---
+    // --- 2. DOM ELEMENT REFERENCES (COMPLETE LIST) ---
     const iframe = document.getElementById('content-frame');
     const learnosityContainer = document.getElementById('learnosity-container');
     const playerTitle = document.getElementById('player-title');
@@ -15,9 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('next-btn');
     const pageIndicator = document.getElementById('page-indicator');
     const activateSelect = document.getElementById('activate-select');
-    // ... (rest of DOM elements are the same)
+    const teacherBtn = document.getElementById('teacher-btn');
+    const teacherPane = document.getElementById('teacher-pane');
+    const closePaneBtn = document.getElementById('close-pane-btn');
+    const paneContent = document.getElementById('pane-content');
+    const paneBackdrop = document.getElementById('pane-backdrop');
 
-    // --- 3. DATA LOADING (Unchanged) ---
+    // --- 3. DATA LOADING ---
     async function loadAllData() {
         try {
             const [manifestResponse, teacherResponse] = await Promise.all([
@@ -44,14 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Log the entire manifest object to see its structure
         console.log("Manifest object being used:", lessonManifest);
 
         currentLessonPages = [];
         const selectedActivateOption = activateSelect.value;
         console.log(`Selected 'Activate' option from dropdown: "${selectedActivateOption}"`);
 
-        // Check if the top-level 'blocks' array exists
         if (!lessonManifest.blocks || !Array.isArray(lessonManifest.blocks)) {
             console.error("Build failed: manifest.blocks is missing or not an array.");
             return;
@@ -85,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if (!block.pages || !Array.isArray(block.pages)) {
                     console.warn(`Block "${block.title}" is missing 'pages' array. Skipping.`);
-                    return; // 'continue' for forEach
+                    return;
                 }
                 block.pages.forEach(page => {
                     currentLessonPages.push({
@@ -102,11 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Final page sequence:", currentLessonPages);
     }
     
-    // The rest of your script.js (loadPage, renderLearnosityItem, updateUI, etc.) remains the same.
-    // I am including the rest of the file for completeness.
-    
     function loadPage(index) {
-        if (index < 0 || index >= currentLessonPages.length) return;
+        if (index < 0 || index >= currentLessonPages.length) {
+            // If we're at 0 of 0, just update the UI to show that.
+            if (currentLessonPages.length === 0) updateUI();
+            return;
+        }
         
         currentPageIndex = index;
         const pageInfo = currentLessonPages[currentPageIndex];
@@ -149,11 +152,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateUI() {
-        if (!currentLessonPages.length) return;
-        pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${currentLessonPages.length}`;
-        prevBtn.disabled = (currentPageIndex === 0);
-        nextBtn.disabled = (currentPageIndex === currentLessonPages.length - 1);
-        playerTitle.textContent = currentLessonPages[currentPageIndex].block;
+        const totalPages = currentLessonPages.length;
+        if (totalPages === 0) {
+            pageIndicator.textContent = `Page 0 of 0`;
+            playerTitle.textContent = "No Pages Loaded";
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+        } else {
+            pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${totalPages}`;
+            prevBtn.disabled = (currentPageIndex === 0);
+            nextBtn.disabled = (currentPageIndex === totalPages - 1);
+            playerTitle.textContent = currentLessonPages[currentPageIndex].block;
+        }
     }
 
     function populateDropdown() {
@@ -170,11 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- Teacher Pane Logic and Event Listeners (Unchanged) ---
-    const teacherPane = document.getElementById('teacher-pane');
-    const closePaneBtn = document.getElementById('close-pane-btn');
-    const paneContent = document.getElementById('pane-content');
-    const paneBackdrop = document.getElementById('pane-backdrop');
+    // --- 5. TEACHER PANE LOGIC ---
     function updateTeacherPane() {
         if (!teacherLessonData || !currentLessonPages.length) return;
         paneContent.innerHTML = '';
@@ -221,6 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
             paneBackdrop.classList.remove('is-visible');
         }
     }
+    
+    // --- 6. EVENT LISTENERS ---
     nextBtn.addEventListener('click', () => loadPage(currentPageIndex + 1));
     prevBtn.addEventListener('click', () => loadPage(currentPageIndex - 1));
     activateSelect.addEventListener('change', () => {
@@ -232,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
     paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
 
-    // --- INITIALIZATION ---
+    // --- 7. INITIALIZATION ---
     async function initializePlayer() {
         await loadAllData();
         if (lessonManifest && teacherLessonData) {
