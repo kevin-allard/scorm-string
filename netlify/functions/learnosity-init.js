@@ -1,5 +1,7 @@
 // File Path: netlify/functions/learnosity-init.js
 const Learnosity = require('learnosity-sdk-nodejs');
+// Import Node's built-in module for generating UUIDs
+const crypto = require('crypto');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -9,22 +11,23 @@ exports.handler = async (event) => {
     try {
         const { item_reference } = JSON.parse(event.body);
         if (!item_reference) {
-            return { statusCode: 400, body: JSON.stringify({ error: 'Item reference is required.' }) };
+            return { 
+                statusCode: 400, 
+                body: JSON.stringify({ error: 'Item reference is required.' }) 
+            };
         }
 
         const consumerKey = process.env.LEARNOSITY_CONSUMER_KEY;
         const consumerSecret = process.env.LEARNOSITY_CONSUMER_SECRET;
         
         const headers = event.headers;
-        const domain = 'scorm-string.netlify.app';
+        const domain = headers['x-forwarded-host'] || 'localhost';
 
-        // Create the SDK instance first
         const learnositySdk = new Learnosity();
-        
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            // ** THE FIX IS HERE: Use the instance `learnositySdk` to get utils **
-            session_id: learnositySdk.utils.uuid(), 
+            // ** THE FINAL FIX: Use the guaranteed, built-in Node.js method **
+            session_id: crypto.randomUUID(), 
             domain: domain,
             items: [item_reference],
             rendering_type: 'inline'
