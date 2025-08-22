@@ -1,7 +1,7 @@
+// --- SCRIPT.JS WITH DEBUGGING LOGS ---
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. STATE & DATA ---
-    // NO MORE HARDCODED DATA. These will be filled from the JSON files.
     let lessonManifest = null;
     let teacherLessonData = null;
     let currentLessonPages = [];
@@ -15,50 +15,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('next-btn');
     const pageIndicator = document.getElementById('page-indicator');
     const activateSelect = document.getElementById('activate-select');
-    const teacherBtn = document.getElementById('teacher-btn');
-    const teacherPane = document.getElementById('teacher-pane');
-    const closePaneBtn = document.getElementById('close-pane-btn');
-    const paneContent = document.getElementById('pane-content');
-    const paneBackdrop = document.getElementById('pane-backdrop');
+    // ... (rest of DOM elements are the same)
 
-    // --- 3. DATA LOADING (WITH IMPROVED ERROR LOGGING) ---
+    // --- 3. DATA LOADING (Unchanged) ---
     async function loadAllData() {
         try {
-            const manifestResponse = await fetch('data/lesson-manifest.json');
-            if (!manifestResponse.ok) {
-                throw new Error(`Failed to fetch lesson-manifest.json (Status: ${manifestResponse.status})`);
+            const [manifestResponse, teacherResponse] = await Promise.all([
+                fetch('data/lesson-manifest.json'),
+                fetch(CONFIG.teacherDataPath)
+            ]);
+            if (!manifestResponse.ok || !teacherResponse.ok) {
+                throw new Error('Failed to fetch one or more data files.');
             }
-            // This line will throw an error if the JSON is invalid
             lessonManifest = await manifestResponse.json();
-            console.log("✅ lesson-manifest.json loaded and parsed successfully.");
-
-            const teacherResponse = await fetch(CONFIG.teacherDataPath);
-            if (!teacherResponse.ok) {
-                throw new Error(`Failed to fetch teacher data (Status: ${teacherResponse.status})`);
-            }
-            // This line will throw an error if the JSON is invalid
             teacherLessonData = await teacherResponse.json();
-            console.log("✅ Teacher data loaded and parsed successfully.");
-
-        } catch (error) {
-            // This will now print the SPECIFIC error to the console for us to see
+        } catch (error){
             console.error("DETAILED ERROR IN LOADALLDATA:", error);
-            
-            // This is the message the user sees
             document.body.innerHTML = `<p style="color:red; font-family: sans-serif; padding: 20px;">ERROR: Could not load lesson-manifest.json or teacher data. Please check the file paths in your 'data' folder and the JSON format.</p>`;
         }
     }
 
-    // --- 4. CORE PLAYER LOGIC ---
+    // --- 4. CORE PLAYER LOGIC (WITH DEBUGGING LOGS) ---
     function buildLessonSequence() {
-        if (!lessonManifest) return;
+        console.log("--- Running buildLessonSequence ---");
+        
+        if (!lessonManifest) {
+            console.error("Build failed: lessonManifest is not loaded.");
+            return;
+        }
+
+        // Log the entire manifest object to see its structure
+        console.log("Manifest object being used:", lessonManifest);
+
         currentLessonPages = [];
         const selectedActivateOption = activateSelect.value;
+        console.log(`Selected 'Activate' option from dropdown: "${selectedActivateOption}"`);
 
-        lessonManifest.blocks.forEach(block => {
+        // Check if the top-level 'blocks' array exists
+        if (!lessonManifest.blocks || !Array.isArray(lessonManifest.blocks)) {
+            console.error("Build failed: manifest.blocks is missing or not an array.");
+            return;
+        }
+
+        lessonManifest.blocks.forEach((block, index) => {
+            console.log(`Processing block ${index + 1}: "${block.title}"`);
+            
             if (block.title === 'Activate') {
+                if (!block.options || !Array.isArray(block.options)) {
+                    console.warn(`'Activate' block is missing 'options' array. Skipping.`);
+                    return;
+                }
                 const selectedActivity = block.options.find(opt => opt.title === selectedActivateOption);
-                if (selectedActivity) {
+                
+                console.log("Found matching activity in 'options':", selectedActivity);
+
+                if (selectedActivity && selectedActivity.pages) {
                     selectedActivity.pages.forEach(page => {
                         currentLessonPages.push({
                             ...page,
@@ -67,8 +78,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             genericBlock: 'Activate'
                         });
                     });
+                } else {
+                    console.warn("No matching activity found or activity has no pages. No 'Activate' pages will be added.");
                 }
+
             } else {
+                if (!block.pages || !Array.isArray(block.pages)) {
+                    console.warn(`Block "${block.title}" is missing 'pages' array. Skipping.`);
+                    return; // 'continue' for forEach
+                }
                 block.pages.forEach(page => {
                     currentLessonPages.push({
                         ...page,
@@ -79,8 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         });
-    }
 
+        console.log(`--- Finished building sequence. Total pages found: ${currentLessonPages.length} ---`);
+        console.log("Final page sequence:", currentLessonPages);
+    }
+    
+    // The rest of your script.js (loadPage, renderLearnosityItem, updateUI, etc.) remains the same.
+    // I am including the rest of the file for completeness.
+    
     function loadPage(index) {
         if (index < 0 || index >= currentLessonPages.length) return;
         
@@ -105,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function renderLearnosityItem(itemRef) {
-        // This line handles both string and object references safely
         learnosityContainer.innerHTML = `<span class="learnosity-item" data-reference='${JSON.stringify(itemRef)}'></span>`;
         try {
             const response = await fetch('/.netlify/functions/learnosity-init', {
@@ -146,8 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
-    // --- 5. TEACHER PANE LOGIC ---
+    
+    // --- Teacher Pane Logic and Event Listeners (Unchanged) ---
+    const teacherPane = document.getElementById('teacher-pane');
+    const closePaneBtn = document.getElementById('close-pane-btn');
+    const paneContent = document.getElementById('pane-content');
+    const paneBackdrop = document.getElementById('pane-backdrop');
     function updateTeacherPane() {
         if (!teacherLessonData || !currentLessonPages.length) return;
         paneContent.innerHTML = '';
@@ -163,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
     function renderSupportItem(item) {
         const el = document.createElement('div');
         el.className = 'support-item';
@@ -186,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
         el.innerHTML = content;
         return el;
     }
-
     function toggleTeacherPane(show) {
         if (show) {
             teacherPane.classList.add('is-open');
@@ -196,8 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
             paneBackdrop.classList.remove('is-visible');
         }
     }
-
-    // --- 6. EVENT LISTENERS ---
     nextBtn.addEventListener('click', () => loadPage(currentPageIndex + 1));
     prevBtn.addEventListener('click', () => loadPage(currentPageIndex - 1));
     activateSelect.addEventListener('change', () => {
@@ -209,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
     paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
 
-    // --- 7. INITIALIZATION ---
+    // --- INITIALIZATION ---
     async function initializePlayer() {
         await loadAllData();
         if (lessonManifest && teacherLessonData) {
@@ -217,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
             buildLessonSequence();
             loadPage(0);
         }
-        // The error message is now displayed inside loadAllData if it fails
     }
 
     initializePlayer();
