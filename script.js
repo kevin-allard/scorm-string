@@ -21,22 +21,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const paneContent = document.getElementById('pane-content');
     const paneBackdrop = document.getElementById('pane-backdrop');
 
-    // --- 3. DATA LOADING ---
+    // --- 3. DATA LOADING (WITH IMPROVED ERROR LOGGING) ---
     async function loadAllData() {
         try {
-            const [manifestResponse, teacherResponse] = await Promise.all([
-                fetch('data/lesson-manifest.json'),
-                fetch(CONFIG.teacherDataPath) // From config.js
-            ]);
-            if (!manifestResponse.ok || !teacherResponse.ok) {
-                throw new Error('Failed to fetch one or more data files.');
+            const manifestResponse = await fetch('data/lesson-manifest.json');
+            if (!manifestResponse.ok) {
+                throw new Error(`Failed to fetch lesson-manifest.json (Status: ${manifestResponse.status})`);
             }
+            // This line will throw an error if the JSON is invalid
             lessonManifest = await manifestResponse.json();
+            console.log("✅ lesson-manifest.json loaded and parsed successfully.");
+
+            const teacherResponse = await fetch(CONFIG.teacherDataPath);
+            if (!teacherResponse.ok) {
+                throw new Error(`Failed to fetch teacher data (Status: ${teacherResponse.status})`);
+            }
+            // This line will throw an error if the JSON is invalid
             teacherLessonData = await teacherResponse.json();
-        } catch (error)
-        {
-            console.error("Failed to load data files:", error);
-            // Display the user-facing error message
+            console.log("✅ Teacher data loaded and parsed successfully.");
+
+        } catch (error) {
+            // This will now print the SPECIFIC error to the console for us to see
+            console.error("DETAILED ERROR IN LOADALLDATA:", error);
+            
+            // This is the message the user sees
             document.body.innerHTML = `<p style="color:red; font-family: sans-serif; padding: 20px;">ERROR: Could not load lesson-manifest.json or teacher data. Please check the file paths in your 'data' folder and the JSON format.</p>`;
         }
     }
@@ -97,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function renderLearnosityItem(itemRef) {
+        // This line handles both string and object references safely
         learnosityContainer.innerHTML = `<span class="learnosity-item" data-reference='${JSON.stringify(itemRef)}'></span>`;
         try {
             const response = await fetch('/.netlify/functions/learnosity-init', {
@@ -138,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 5. TEACHER PANE LOGIC (Complete) ---
+    // --- 5. TEACHER PANE LOGIC ---
     function updateTeacherPane() {
         if (!teacherLessonData || !currentLessonPages.length) return;
         paneContent.innerHTML = '';
