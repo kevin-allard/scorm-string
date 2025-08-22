@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Player with Teacher Support</title>
+    <title>Lesson Player with Learnosity</title>
     <link rel="stylesheet" href="style.css">
+    <!-- The Learnosity API script is required -->
+    <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
 </head>
 <body>
     <div id="player-container">
@@ -16,12 +18,14 @@
             </div>
             <button id="teacher-btn">Teacher Support</button>
         </header>
-
+        
         <main id="content-window">
-            <!-- The iframe for student XHTML content is back -->
+            <!-- This iframe MUST have the id "content-frame" -->
             <iframe id="content-frame" src="" title="Lesson Content"></iframe>
+            <!-- This div MUST have the id "learnosity-container" -->
+            <div id="learnosity-container"></div>
         </main>
-
+        
         <footer id="player-navigation">
             <button id="prev-btn">&laquo; Previous</button>
             <span id="page-indicator">Page 0 of 0</span>
@@ -29,19 +33,16 @@
         </footer>
     </div>
 
-    <!-- The Teacher Support Slide-Over Pane -->
+    <!-- The Teacher Pane structure -->
     <div id="teacher-pane">
         <div class="pane-header">
             <h2>Teacher Support</h2>
             <button id="close-pane-btn">&times;</button>
         </div>
-        <div id="pane-content">
-            <!-- Teacher notes will be dynamically inserted here -->
-        </div>
+        <div id="pane-content"></div>
     </div>
     <div id="pane-backdrop"></div>
 
-    <!-- Load config.js BEFORE script.js -->
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
