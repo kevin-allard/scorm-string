@@ -86,23 +86,24 @@
           "type": "learnosity",
           "item_reference": {
             "id": "MSMB_C01_M01_T01_L01_ET_S1_01",
-            "organisation_id": 893 
-         }
+            "organisation_id": 893
+          }
         },
         {
           "type": "learnosity",
           "item_reference": {
             "id": "MSMB_C01_M01_T01_L01_ET_S1_02",
             "organisation_id": 893
-         }
+          }
         },
         {
           "type": "learnosity",
           "item_reference": {
             "id": "MSMB_C01_M01_T01_L01_ET_S1_03",
             "organisation_id": 893
-         }
+          }
         }
       ]
     }
+  ] // <-- THIS CLOSING BRACKET WAS THE MISSING PIECE. It closes the "blocks" array.
 }
