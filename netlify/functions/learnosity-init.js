@@ -9,10 +9,7 @@ exports.handler = async (event) => {
     try {
         const { item_reference } = JSON.parse(event.body);
         if (!item_reference) {
-            return { 
-                statusCode: 400, 
-                body: JSON.stringify({ error: 'Item reference is required.' }) 
-            };
+            return { statusCode: 400, body: JSON.stringify({ error: 'Item reference is required.' }) };
         }
 
         const consumerKey = process.env.LEARNOSITY_CONSUMER_KEY;
@@ -21,10 +18,13 @@ exports.handler = async (event) => {
         const headers = event.headers;
         const domain = headers['x-forwarded-host'] || 'localhost';
 
+        // Create the SDK instance first
         const learnositySdk = new Learnosity();
+        
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            session_id: Learnosity.utils.uuid(), 
+            // ** THE FIX IS HERE: Use the instance `learnositySdk` to get utils **
+            session_id: learnositySdk.utils.uuid(), 
             domain: domain,
             items: [item_reference],
             rendering_type: 'inline'
