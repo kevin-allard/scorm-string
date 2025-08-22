@@ -16,7 +16,7 @@ exports.handler = async (event) => {
         const consumerSecret = process.env.LEARNOSITY_CONSUMER_SECRET;
         
         const headers = event.headers;
-        const domain = headers['x-forwarded-host'] || 'localhost';
+        const domain = 'scorm-string.netlify.app';
 
         // Create the SDK instance first
         const learnositySdk = new Learnosity();
