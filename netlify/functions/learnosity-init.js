@@ -24,7 +24,6 @@ exports.handler = async (event) => {
         const learnositySdk = new Learnosity();
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            // ** THIS IS THE CORRECTED LINE **
             session_id: Learnosity.utils.uuid(), 
             domain: domain,
             items: [item_reference],
