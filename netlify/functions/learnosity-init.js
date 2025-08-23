@@ -1,6 +1,5 @@
 // File Path: netlify/functions/learnosity-init.js
 const Learnosity = require('learnosity-sdk-nodejs');
-// Import Node's built-in module for generating UUIDs
 const crypto = require('crypto');
 
 exports.handler = async (event) => {
@@ -23,17 +22,18 @@ exports.handler = async (event) => {
         const headers = event.headers;
         const domain = headers['x-forwarded-host'] || 'localhost';
 
-        const learnositySdk = new Learnosity();
+        // NOTE: We no longer create an instance with "new Learnosity()"
+
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            // ** THE FINAL FIX: Use the guaranteed, built-in Node.js method **
             session_id: crypto.randomUUID(), 
             domain: domain,
             items: [item_reference],
             rendering_type: 'inline'
         };
 
-        const signedRequest = learnositySdk.init('items', {
+        // ** THE FINAL FIX: Call 'init' directly on the main Learnosity class **
+        const signedRequest = Learnosity.init('items', {
             consumer_key: consumerKey,
             consumer_secret: consumerSecret
         }, request);
