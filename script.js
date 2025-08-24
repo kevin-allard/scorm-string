@@ -1,6 +1,3 @@
-// File Path: script.js
-// This is the final diagnostic version with the Learnosity error listener.
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. STATE & DATA ---
@@ -87,8 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function renderLearnosityContent(pageInfo) {
         if (pageInfo.activity_reference) {
-            // This is a placeholder for the API to find. The class name 'learnosity-activity' is important.
-            learnosityContainer.innerHTML = `<span class="learnosity-activity" data-reference="${pageInfo.activity_reference}"></span>`;
+            // The Activities API needs a clean container to render into.
+            learnosityContainer.innerHTML = '';
             try {
                 const response = await fetch('/.netlify/functions/learnosity-init', {
                     method: 'POST',
@@ -98,10 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Server returned an error.');
                 const signedRequest = await response.json();
                 
-                // ** THE FINAL FIX IS HERE: Call 'LearnosityItems.init', which correctly renders activities. **
-                LearnosityItems.init(signedRequest, {
+                // ** THE FINAL FIX IS HERE: Call 'LearnosityActivities.init'. **
+                // This is the correct API for rendering a full activity.
+                LearnosityActivities.init(signedRequest, {
                     readyListener() {
-                        console.log("Learnosity Items API is ready and has rendered the activity!");
+                        console.log("Learnosity Activities API is ready!");
                     },
                     errorListener(err) {
                         console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
