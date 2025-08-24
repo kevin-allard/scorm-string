@@ -1,6 +1,7 @@
 // File Path: netlify/functions/learnosity-init.js
-const Learnosity = require('learnosity-sdk-nodejs');
-const crypto = require('crypto');
+
+// ** THE FINAL FIX IS HERE: Use destructuring to get the Learnosity class **
+const { Learnosity } = require('learnosity-sdk-nodejs');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -22,18 +23,20 @@ exports.handler = async (event) => {
         const headers = event.headers;
         const domain = headers['x-forwarded-host'] || 'localhost';
 
-        // NOTE: We no longer create an instance with "new Learnosity()"
-
+        // Now that the import is correct, creating an instance will work properly.
+        const learnositySdk = new Learnosity();
+        
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            session_id: crypto.randomUUID(), 
+            // And now the SDK's own utils will work, so we don't need the crypto workaround.
+            session_id: learnositySdk.utils.uuid(), 
             domain: domain,
             items: [item_reference],
             rendering_type: 'inline'
         };
 
-        // ** THE FINAL FIX: Call 'init' directly on the main Learnosity class **
-        const signedRequest = Learnosity.init('items', {
+        // Calling .init() on the correctly formed instance will now succeed.
+        const signedRequest = learnositySdk.init('items', {
             consumer_key: consumerKey,
             consumer_secret: consumerSecret
         }, request);
