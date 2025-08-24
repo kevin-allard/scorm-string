@@ -7,11 +7,10 @@
     <link rel="stylesheet" href="style.css">
     
     <!-- 
-      THE FINAL FIX IS HERE: Load the correct Learnosity Activities API.
-      The previous version loaded the "Items" API, but our code uses the "Activities" API.
-      This change ensures the 'LearnosityActivities' object is defined.
+      THE FINAL FIX IS HERE: This is the correct and only URL for the Learnosity Items & Activities API.
+      The previous URL was incorrect and caused the ERR_NAME_NOT_RESOLVED error.
     -->
-    <script src="https://activities.learnosity.com/?v2024.1.LTS"></script>
+    <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
 </head>
 <body>
     <div id="player-container">

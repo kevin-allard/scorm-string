@@ -79,16 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.style.display = 'none';
             iframe.src = 'about:blank';
             learnosityContainer.style.display = 'block';
-            renderLearnosityContent(pageInfo); // Pass the whole page object
+            renderLearnosityContent(pageInfo);
         }
         updateUI();
         updateTeacherPane();
     }
 
     async function renderLearnosityContent(pageInfo) {
-        // This function now handles both individual items and full activities.
         if (pageInfo.activity_reference) {
-            learnosityContainer.innerHTML = `<span class="learnosity-api" data-reference="${pageInfo.activity_reference}"></span>`;
+            // This is a placeholder for the API to find. The class name 'learnosity-activity' is important.
+            learnosityContainer.innerHTML = `<span class="learnosity-activity" data-reference="${pageInfo.activity_reference}"></span>`;
             try {
                 const response = await fetch('/.netlify/functions/learnosity-init', {
                     method: 'POST',
@@ -98,17 +98,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Server returned an error.');
                 const signedRequest = await response.json();
                 
-                // Initialize the Activities API
-                LearnosityActivities.init(signedRequest, {
-                    readyListener() { console.log("Learnosity Activities API is ready!"); }
+                // ** THE FINAL FIX IS HERE: Call 'LearnosityItems.init', which correctly renders activities. **
+                LearnosityItems.init(signedRequest, {
+                    readyListener() {
+                        console.log("Learnosity Items API is ready and has rendered the activity!");
+                    },
+                    errorListener(err) {
+                        console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
+                    }
                 });
 
             } catch (error) {
                 console.error('Error rendering Learnosity activity:', error);
                 learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
             }
-        } else {
-            console.error("Learnosity content is missing 'activity_reference'. Check lesson-manifest.json");
         }
     }
 
