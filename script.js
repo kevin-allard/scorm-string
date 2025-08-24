@@ -16,23 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAllData() {
         try {
-            // Step 1: Fetch the main lesson manifest
+            console.log("Attempting to load 'data/lesson-manifest.json'...");
             const manifestResponse = await fetch('data/lesson-manifest.json');
             if (!manifestResponse.ok) { throw new Error('Could not fetch lesson-manifest.json'); }
             lessonManifest = await manifestResponse.json();
+            console.log("✅ Manifest loaded successfully.", lessonManifest);
 
-            // Step 2: Check if the manifest specifies a teacher guide
             if (lessonManifest && lessonManifest.teacherGuideFile) {
-                // Step 3: Use the filename from the manifest to fetch the correct teacher file
-                const teacherResponse = await fetch(`data/${lessonManifest.teacherGuideFile}`);
+                const teacherFilePath = `data/${lessonManifest.teacherGuideFile}`;
+                console.log(`Manifest specified a teacher guide. Attempting to load '${teacherFilePath}'...`);
+                const teacherResponse = await fetch(teacherFilePath);
                 if (!teacherResponse.ok) { throw new Error(`Could not fetch teacher guide: ${lessonManifest.teacherGuideFile}`); }
                 teacherLessonData = await teacherResponse.json();
+                console.log("✅ Teacher guide data loaded successfully.", teacherLessonData);
             } else {
-                console.warn("No teacherGuideFile specified in the lesson manifest.");
+                console.warn("No 'teacherGuideFile' property found in the lesson manifest.");
             }
         } catch (error){
             console.error("ERROR IN LOADALLDATA:", error);
-            document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check JSON format and paths.</p>`;
+            document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check console for details.</p>`;
         }
     }
 
@@ -106,18 +108,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTeacherPane() {
+        console.log("--- Updating Teacher Pane ---");
         if (!teacherLessonData || !currentLessonPages.length) {
+            console.warn("Update failed: Teacher data or lesson pages not available.");
             paneContent.innerHTML = '<p>Teacher support content is not available for this lesson.</p>';
             return;
         }
         paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
+        console.log(`Current page's genericBlock key: "${currentGenericBlock}"`);
+        
         if (!teacherLessonData.lesson_support_sessions || !Array.isArray(teacherLessonData.lesson_support_sessions) || teacherLessonData.lesson_support_sessions.length === 0) {
+            console.warn("Update failed: 'lesson_support_sessions' is missing or empty in teacher data.");
             paneContent.innerHTML = `<p>No support sessions found.</p>`; return;
         }
         const allSupportItems = teacherLessonData.lesson_support_sessions[0].support_items;
-        if(!allSupportItems) { paneContent.innerHTML = `<p>No support items found.</p>`; return; }
+        if(!allSupportItems) { 
+            console.warn("Update failed: 'support_items' is missing in the first session of teacher data.");
+            paneContent.innerHTML = `<p>No support items found.</p>`; return; 
+        }
+
         const relevantSupportItems = allSupportItems.filter(item => item.block === currentGenericBlock);
+        console.log(`Found ${relevantSupportItems.length} support items for this block.`);
+
         if (relevantSupportItems.length === 0) {
             paneContent.innerHTML = `<p>No specific support notes for this block.</p>`;
         } else {
