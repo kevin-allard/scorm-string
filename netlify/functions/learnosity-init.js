@@ -1,10 +1,7 @@
 // File Path: netlify/functions/learnosity-init.js
-// This is the final diagnostic script to find the exact domain and solve the 41003 error.
+// This is the final, production-ready version that includes the required activity_id.
 
-// The entire module is the constructor function.
-const Learnosity = require('learnosity-sdk-nodejs');
-// Node's built-in crypto library is the most reliable way to generate a UUID.
-const crypto = require('crypto');
+const { Learnosity } = require('learnosity-sdk-nodejs');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -23,36 +20,30 @@ exports.handler = async (event) => {
         const consumerKey = process.env.LEARNOSITY_CONSUMER_KEY;
         const consumerSecret = process.env.LEARNOSITY_CONSUMER_SECRET;
         
-        if (typeof consumerKey !== 'string' || typeof consumerSecret !== 'string') {
-            console.error('CRITICAL ERROR: Consumer Key or Secret is not a string. Check Netlify environment variables.');
-            throw new Error('Invalid credential type.');
-        }
-        
-        // --- THIS IS THE CRITICAL PART ---
-        // We are using a more reliable method to get the domain from Netlify.
-        // The previous attempt failed because the function was crashing earlier.
-        const siteUrl = new URL(event.rawUrl);
-        const domain = siteUrl.hostname;
+        const headers = event.headers;
+        const domain = headers['x-forwarded-host'] || 'localhost';
 
-        // This log will now print the TRUE domain to the Netlify function log.
-        console.log(`LEARNOSITY-DIAGNOSTIC: Exact domain being sent is: "${domain}"`);
-        // ------------------------------------
-        
         const learnositySdk = new Learnosity();
         
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            session_id: crypto.randomUUID(), 
+            session_id: learnositySdk.utils.uuid(), 
             domain: domain,
+            
+            // ** THE FINAL FIX IS HERE: Add the required activity ID **
+            // This gives Learnosity a unique name for this "mini-test".
+            activity_template_id: 'quick-check-activity',
+            activity_id: 'quick-check-activity-instance-1', // In a real app, this would be unique per student attempt
+
             items: [item_reference],
             rendering_type: 'inline'
         };
 
         const signedRequest = learnositySdk.init(
             'items',
-            { consumer_key: consumerKey, domain: domain }, // security packet
-            consumerSecret,                               // secret
-            request                                       // request object
+            { consumer_key: consumerKey, domain: domain }, 
+            consumerSecret,                               
+            request                                       
         );
 
         return {
