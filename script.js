@@ -16,21 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAllData() {
         try {
-            console.log("Attempting to load 'data/lesson-manifest.json'...");
             const manifestResponse = await fetch('data/lesson-manifest.json');
             if (!manifestResponse.ok) { throw new Error('Could not fetch lesson-manifest.json'); }
             lessonManifest = await manifestResponse.json();
-            console.log("✅ Manifest loaded successfully.", lessonManifest);
 
             if (lessonManifest && lessonManifest.teacherGuideFile) {
                 const teacherFilePath = `data/${lessonManifest.teacherGuideFile}`;
-                console.log(`Manifest specified a teacher guide. Attempting to load '${teacherFilePath}'...`);
                 const teacherResponse = await fetch(teacherFilePath);
                 if (!teacherResponse.ok) { throw new Error(`Could not fetch teacher guide: ${lessonManifest.teacherGuideFile}`); }
                 teacherLessonData = await teacherResponse.json();
-                console.log("✅ Teacher guide data loaded successfully.", teacherLessonData);
-            } else {
-                console.warn("No 'teacherGuideFile' property found in the lesson manifest.");
             }
         } catch (error){
             console.error("ERROR IN LOADALLDATA:", error);
@@ -107,34 +101,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- THIS ENTIRE FUNCTION HAS BEEN REWRITTEN ---
     function updateTeacherPane() {
-        console.log("--- Updating Teacher Pane ---");
         if (!teacherLessonData || !currentLessonPages.length) {
-            console.warn("Update failed: Teacher data or lesson pages not available.");
             paneContent.innerHTML = '<p>Teacher support content is not available for this lesson.</p>';
             return;
         }
         paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
-        console.log(`Current page's genericBlock key: "${currentGenericBlock}"`);
+
+        const pacingGuideItem = teacherLessonData.overview_items.find(item => item.overview_item_type === 'pacing_guide');
+
+        if (!pacingGuideItem) {
+            paneContent.innerHTML = `<p>No pacing guide found in teacher data.</p>`;
+            return;
+        }
+
+        const supportBlocks = pacingGuideItem.overview_item_data?.overview_item_data_items?.[0]?.overview_item_data_groups;
+        if (!supportBlocks) {
+            paneContent.innerHTML = `<p>Pacing guide has an unexpected structure.</p>`;
+            return;
+        }
+
+        const relevantBlock = supportBlocks.find(block => block.overview_item_data_group_title === currentGenericBlock);
         
-        if (!teacherLessonData.lesson_support_sessions || !Array.isArray(teacherLessonData.lesson_support_sessions) || teacherLessonData.lesson_support_sessions.length === 0) {
-            console.warn("Update failed: 'lesson_support_sessions' is missing or empty in teacher data.");
-            paneContent.innerHTML = `<p>No support sessions found.</p>`; return;
-        }
-        const allSupportItems = teacherLessonData.lesson_support_sessions[0].support_items;
-        if(!allSupportItems) { 
-            console.warn("Update failed: 'support_items' is missing in the first session of teacher data.");
-            paneContent.innerHTML = `<p>No support items found.</p>`; return; 
-        }
-
-        const relevantSupportItems = allSupportItems.filter(item => item.block === currentGenericBlock);
-        console.log(`Found ${relevantSupportItems.length} support items for this block.`);
-
-        if (relevantSupportItems.length === 0) {
+        if (!relevantBlock || !relevantBlock.overview_item_data_group_items) {
             paneContent.innerHTML = `<p>No specific support notes for this block.</p>`;
         } else {
-            relevantSupportItems.forEach(item => {
+            relevantBlock.overview_item_data_group_items.forEach(item => {
                 const supportEl = renderSupportItem(item);
                 paneContent.appendChild(supportEl);
             });
@@ -144,20 +138,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderSupportItem(item) {
         const el = document.createElement('div');
         el.className = 'support-item';
-        let content = `<h4>${item.feature_title}</h4>`;
-        const data = item.feature_data;
-        if (data.purpose) content += `<p><strong>Purpose:</strong> ${data.purpose}</p>`;
-        if (data.steps) {
-            content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
-        } else if (data.text) {
-             content += data.text;
-        } else if (data.questions) {
-             content += '<ul>' + data.questions.map(q => `<li>${q}</li>`).join('') + '</ul>';
-        } else if (data.items && Array.isArray(data.items)) {
-            content += '<ul>';
-            data.items.forEach(q_set => content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join(''));
-            content += '</ul>';
-        }
+        
+        // Use the new property names from the JSON file
+        const title = item.overview_item_data_group_item_title || '';
+        const prefix = item.overview_item_data_group_item_prefix || '';
+        const description = item.overview_item_data_group_item_description || 'No description available.';
+
+        let fullTitle = prefix ? `${prefix}: ${title}` : title;
+        
+        let content = `<h4>${fullTitle}</h4>`;
+        content += `<p>${description}</p>`;
+        
         el.innerHTML = content;
         return el;
     }
