@@ -1,10 +1,10 @@
 // File Path: netlify/functions/learnosity-init.js
-// This is the final, bulletproof version that addresses both the domain and constructor errors.
+// This is the final, bulletproof version based on all combined diagnostic logs.
 
-// Use a more robust import method to handle module inconsistencies.
-const LearnosityModule = require('learnosity-sdk-nodejs');
-// This line says: "Try to get the 'default' export. If it doesn't exist, assume the whole module is the constructor."
-const Learnosity = LearnosityModule.default || LearnosityModule;
+// The entire module is the constructor function, so we import it directly.
+const Learnosity = require('learnosity-sdk-nodejs');
+// Node's built-in crypto library is the most reliable way to generate a UUID.
+const crypto = require('crypto');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -23,27 +23,34 @@ exports.handler = async (event) => {
         const consumerKey = process.env.LEARNOSITY_CONSUMER_KEY;
         const consumerSecret = process.env.LEARNOSITY_CONSUMER_SECRET;
         
-        // ** FIX #1: A more reliable way to get the domain **
-        // Netlify provides the full URL of the request in event.rawUrl.
-        const siteUrl = new URL(event.rawUrl);
-        const domain = siteUrl.hostname; // This will correctly be "scorm-string.netlify.app"
+        if (typeof consumerKey !== 'string' || typeof consumerSecret !== 'string') {
+            console.error('CRITICAL ERROR: Consumer Key or Secret is not a string. Check Netlify environment variables.');
+            throw new Error('Invalid credential type.');
+        }
 
-        // With the import fixed, the standard SDK usage pattern will now work.
+        const headers = event.headers;
+        const domain = headers['x-forwarded-host'] || 'localhost';
+        
+        // 1. Create an instance of the Learnosity SDK. This is the correct pattern.
         const learnositySdk = new Learnosity();
         
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            // With a correct instance, the SDK's own utils will now work.
-            session_id: learnositySdk.utils.uuid(), 
+            // 2. Use the robust, built-in Node.js method for the session ID, bypassing the buggy SDK utility.
+            session_id: crypto.randomUUID(), 
             domain: domain,
             items: [item_reference],
             rendering_type: 'inline'
         };
 
-        const signedRequest = learnositySdk.init('items', {
-            consumer_key: consumerKey,
-            consumer_secret: consumerSecret
-        }, request);
+        // 3. Use the explicit 4-argument .init() call to prevent signing errors.
+        // This is the most robust way to call the signing method.
+        const signedRequest = learnositySdk.init(
+            'items',
+            { consumer_key: consumerKey, domain: domain }, // security packet
+            consumerSecret,                               // secret
+            request                                       // request object
+        );
 
         return {
             statusCode: 200,
