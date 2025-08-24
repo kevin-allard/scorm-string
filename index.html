@@ -5,51 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson Player with Learnosity</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
     
     <!-- 
-      THE FINAL FIX IS HERE: A Mock SCORM 1.2 API.
-      This script creates a placeholder 'API' object on the main window.
-      The SCORM content inside the iframe looks for this object. Finding it
-      prevents the content's internal scripts from crashing, which was causing
-      the player to appear blank.
+      THE FINAL FIX IS HERE: Load the correct Learnosity Activities API.
+      The previous version loaded the "Items" API, but our code uses the "Activities" API.
+      This change ensures the 'LearnosityActivities' object is defined.
     -->
-    <script>
-        window.API = {
-            LMSInitialize: function() {
-                console.log("LMSInitialize called");
-                return "true";
-            },
-            LMSGetValue: function(parameter) {
-                console.log("LMSGetValue called with:", parameter);
-                return "";
-            },
-            LMSSetValue: function(parameter, value) {
-                console.log("LMSSetValue called with:", parameter, "Value:", value);
-                return "true";
-            },
-            LMSCommit: function() {
-                console.log("LMSCommit called");
-                return "true";
-            },
-            LMSFinish: function() {
-                console.log("LMSFinish called");
-                return "true";
-            },
-            LMSGetLastError: function() {
-                console.log("LMSGetLastError called");
-                return "0";
-            },
-            LMSGetErrorString: function(errorCode) {
-                console.log("LMSGetErrorString called with:", errorCode);
-                return "No error";
-            },
-            LMSGetDiagnostic: function(errorCode) {
-                console.log("LMSGetDiagnostic called with:", errorCode);
-                return "No diagnostic information";
-            }
-        };
-    </script>
+    <script src="https://activities.learnosity.com/?v2024.1.LTS"></script>
 </head>
 <body>
     <div id="player-container">
@@ -63,9 +25,7 @@
         </header>
         
         <main id="content-window">
-            <!-- We are removing the 'sandbox' attribute as it is no longer needed. -->
             <iframe id="content-frame" src="" title="Lesson Content"></iframe>
-            
             <div id="learnosity-container"></div>
         </main>
         
