@@ -1,10 +1,7 @@
 // File Path: netlify/functions/learnosity-init.js
-// This is the final, production-ready version that hardcodes the correct domain.
+// This is the final, production version.
 
-// The entire module is the constructor function.
-const Learnosity = require('learnosity-sdk-nodejs');
-// Node's built-in crypto library is the most reliable way to generate a UUID.
-const crypto = require('crypto');
+const { Learnosity } = require('learnosity-sdk-nodejs');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -12,40 +9,36 @@ exports.handler = async (event) => {
     }
 
     try {
-        const { item_reference } = JSON.parse(event.body);
-        if (!item_reference) {
+        // We now expect an 'activity_reference' from the front-end
+        const { activity_reference } = JSON.parse(event.body);
+        if (!activity_reference) {
             return { 
                 statusCode: 400, 
-                body: JSON.stringify({ error: 'Item reference is required.' }) 
+                body: JSON.stringify({ error: 'Activity reference is required.' }) 
             };
         }
 
         const consumerKey = process.env.LEARNOSITY_CONSUMER_KEY;
         const consumerSecret = process.env.LEARNOSITY_CONSUMER_SECRET;
-        
-        if (typeof consumerKey !== 'string' || typeof consumerSecret !== 'string') {
-            console.error('CRITICAL ERROR: Consumer Key or Secret is not a string.');
-            throw new Error('Invalid credential type.');
-        }
+        const headers = event.headers;
+        const domain = headers['x-forwarded-host'] || 'localhost';
 
-        // ** THE FINAL, DEFINITIVE FIX IS HERE **
-        // We will no longer try to detect the domain. We will set it directly.
-        const domain = 'scorm-string.netlify.app';
-        
         const learnositySdk = new Learnosity();
         
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            session_id: crypto.randomUUID(), 
+            session_id: learnositySdk.utils.uuid(), 
             domain: domain,
-            items: [item_reference],
+            // The request now contains the activity_template_id
+            activity_template_id: activity_reference,
             rendering_type: 'inline',
-            activity_template_id: 'quick-check-activity',
-            activity_id: 'quick-check-activity-instance-1'
+            type: 'submit_practice',
+            name: 'Quick Check Assessment'
         };
 
+        // We are now initializing the "activities" API, not the "items" API.
         const signedRequest = learnositySdk.init(
-            'items',
+            'activities',
             { consumer_key: consumerKey, domain: domain }, 
             consumerSecret,                               
             request                                       

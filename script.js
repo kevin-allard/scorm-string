@@ -2,66 +2,37 @@
 // This is the final diagnostic version with the Learnosity error listener.
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- All State, Data, and DOM References are the same ---
-    let lessonManifest = null, teacherLessonData = null, currentLessonPages = [], currentPageIndex = 0;
-    const iframe = document.getElementById('content-frame'), learnosityContainer = document.getElementById('learnosity-container'),
-        playerTitle = document.getElementById('player-title'), prevBtn = document.getElementById('prev-btn'),
-        nextBtn = document.getElementById('next-btn'), pageIndicator = document.getElementById('page-indicator'),
-        activateSelect = document.getElementById('activate-select'), teacherBtn = document.getElementById('teacher-btn'),
-        teacherPane = document.getElementById('teacher-pane'), closePaneBtn = document.getElementById('close-pane-btn'),
-        paneContent = document.getElementById('pane-content'), paneBackdrop = document.getElementById('pane-backdrop');
 
-    // --- Data Loading is the same ---
-    async function loadAllData() { /* ... function is unchanged ... */ }
-    
-    // --- buildLessonSequence is the same ---
-    function buildLessonSequence() { /* ... function is unchanged ... */ }
+    // --- 1. STATE & DATA ---
+    let lessonManifest = null;
+    let teacherLessonData = null;
+    let currentLessonPages = [];
+    let currentPageIndex = 0;
 
-    // --- loadPage is the same ---
-    function loadPage(index) { /* ... function is unchanged ... */ }
+    // --- 2. DOM ELEMENT REFERENCES ---
+    const iframe = document.getElementById('content-frame');
+    const learnosityContainer = document.getElementById('learnosity-container');
+    const playerTitle = document.getElementById('player-title');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pageIndicator = document.getElementById('page-indicator');
+    const activateSelect = document.getElementById('activate-select');
+    const teacherBtn = document.getElementById('teacher-btn');
+    const teacherPane = document.getElementById('teacher-pane');
+    const closePaneBtn = document.getElementById('close-pane-btn');
+    const paneContent = document.getElementById('pane-content');
+    const paneBackdrop = document.getElementById('pane-backdrop');
 
-    // --- THIS IS THE CRITICAL UPDATE ---
-    async function renderLearnosityItem(itemRef) {
-        learnosityContainer.innerHTML = `<span class="learnosity-item" data-reference='${JSON.stringify(itemRef)}'></span>`;
-        try {
-            const response = await fetch('/.netlify/functions/learnosity-init', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ item_reference: itemRef })
-            });
-            if (!response.ok) throw new Error('Server returned an error.');
-            
-            const signedRequest = await response.json();
-
-            // --- NEW DIAGNOSTIC LOG ---
-            // This will show us the exact object being passed to Learnosity.
-            console.log("LEARNOSITY-DIAGNOSTIC: Passing this signed request to LearnosityItems.init():", signedRequest);
-            // --------------------------
-
-            // --- UPDATED INIT CALL WITH ERROR LISTENER ---
-            const itemsApp = LearnosityItems.init(signedRequest, {
-                readyListener() {
-                    console.log("Learnosity readyListener fired: The API is ready.");
-                },
-                // This is the most important part. It will catch silent Learnosity errors.
-                errorListener(err) {
-                    console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
-                    learnosityContainer.innerHTML = `<p style="color: red;">Learnosity API Error: ${err.message}</p>`;
-                }
-            });
-
-        } catch (error) {
-            console.error('Error rendering Learnosity item:', error);
-            learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
-        }
-    }
-
-    // --- All other functions (updateUI, populateDropdown, Teacher Pane, Event Listeners, Init) are the same ---
-    // Pasting them below for completeness.
+    // --- 3. DATA LOADING ---
     async function loadAllData() {
         try {
-            const [manifestResponse, teacherResponse] = await Promise.all([ fetch('data/lesson-manifest.json'), fetch(CONFIG.teacherDataPath) ]);
-            if (!manifestResponse.ok || !teacherResponse.ok) { throw new Error('Failed to fetch one or more data files.'); }
+            const [manifestResponse, teacherResponse] = await Promise.all([
+                fetch('data/lesson-manifest.json'),
+                fetch(CONFIG.teacherDataPath)
+            ]);
+            if (!manifestResponse.ok || !teacherResponse.ok) {
+                throw new Error('Failed to fetch one or more data files.');
+            }
             lessonManifest = await manifestResponse.json();
             teacherLessonData = await teacherResponse.json();
         } catch (error){
@@ -69,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.innerHTML = `<p style="color:red; font-family: sans-serif; padding: 20px;">ERROR: Could not load lesson-manifest.json or teacher data. Please check the file paths in your 'data' folder and the JSON format.</p>`;
         }
     }
+
+    // --- 4. CORE PLAYER LOGIC ---
     function buildLessonSequence() {
         if (!lessonManifest) return;
         currentLessonPages = [];
@@ -88,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
     function loadPage(index) {
         if (index < 0 || index >= currentLessonPages.length) {
             if (currentLessonPages.length === 0) updateUI();
@@ -105,11 +79,39 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.style.display = 'none';
             iframe.src = 'about:blank';
             learnosityContainer.style.display = 'block';
-            renderLearnosityItem(pageInfo.item_reference);
+            renderLearnosityContent(pageInfo); // Pass the whole page object
         }
         updateUI();
         updateTeacherPane();
     }
+
+    async function renderLearnosityContent(pageInfo) {
+        // This function now handles both individual items and full activities.
+        if (pageInfo.activity_reference) {
+            learnosityContainer.innerHTML = `<span class="learnosity-api" data-reference="${pageInfo.activity_reference}"></span>`;
+            try {
+                const response = await fetch('/.netlify/functions/learnosity-init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ activity_reference: pageInfo.activity_reference })
+                });
+                if (!response.ok) throw new Error('Server returned an error.');
+                const signedRequest = await response.json();
+                
+                // Initialize the Activities API
+                LearnosityActivities.init(signedRequest, {
+                    readyListener() { console.log("Learnosity Activities API is ready!"); }
+                });
+
+            } catch (error) {
+                console.error('Error rendering Learnosity activity:', error);
+                learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
+            }
+        } else {
+            console.error("Learnosity content is missing 'activity_reference'. Check lesson-manifest.json");
+        }
+    }
+
     function updateUI() {
         const totalPages = currentLessonPages.length;
         if (totalPages === 0) {
@@ -124,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             playerTitle.textContent = currentLessonPages[currentPageIndex].block;
         }
     }
+
     function populateDropdown() {
         if (!lessonManifest) return;
         const activateBlock = lessonManifest.blocks.find(block => block.title === 'Activate');
@@ -137,6 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
+    // --- 5. TEACHER PANE LOGIC ---
     function updateTeacherPane() {
         if (!teacherLessonData || !currentLessonPages.length) return;
         paneContent.innerHTML = '';
@@ -157,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
     function renderSupportItem(item) {
         const el = document.createElement('div');
         el.className = 'support-item';
@@ -179,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.innerHTML = content;
         return el;
     }
+
     function toggleTeacherPane(show) {
         if (show) {
             teacherPane.classList.add('is-open');
@@ -188,6 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
             paneBackdrop.classList.remove('is-visible');
         }
     }
+    
+    // --- 6. EVENT LISTENERS ---
     nextBtn.addEventListener('click', () => loadPage(currentPageIndex + 1));
     prevBtn.addEventListener('click', () => loadPage(currentPageIndex - 1));
     activateSelect.addEventListener('change', () => {
@@ -198,6 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
     teacherBtn.addEventListener('click', () => toggleTeacherPane(true));
     closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
     paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
+
+    // --- 7. INITIALIZATION ---
     async function initializePlayer() {
         await loadAllData();
         if (lessonManifest && teacherLessonData) {
@@ -206,5 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loadPage(0);
         }
     }
+
     initializePlayer();
 });
