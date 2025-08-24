@@ -61,17 +61,19 @@ body {
     border: none;
 }
 
+/* --- MODIFICATIONS ARE HERE --- */
 #image-container {
     display: none; /* Hidden by default */
     flex-grow: 1;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    padding: 10px;
+    padding: 20px; /* Added some padding for spacing */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0;
+    justify-content: center; /* Horizontally center */
+    align-items: flex-start; /* Vertically align to the top */
+    background-color: #ffffff; /* Changed to white */
+    overflow-y: auto; /* Allow scrolling for very large images */
 }
 
 #image-container img {
@@ -80,6 +82,8 @@ body {
     object-fit: contain;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+/* --- END OF MODIFICATIONS --- */
+
 
 #player-header h1 { font-size: 1.2rem; margin: 0; }
 #controls label { margin-right: 10px; font-size: 0.9rem; }

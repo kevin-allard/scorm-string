@@ -16,13 +16,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAllData() {
         try {
-            const [manifestResponse, teacherResponse] = await Promise.all([
-                fetch('data/lesson-manifest.json'),
-                fetch(CONFIG.teacherDataPath)
-            ]);
-            if (!manifestResponse.ok || !teacherResponse.ok) { throw new Error('Failed to fetch data files.'); }
+            // Step 1: Fetch the main lesson manifest
+            const manifestResponse = await fetch('data/lesson-manifest.json');
+            if (!manifestResponse.ok) { throw new Error('Could not fetch lesson-manifest.json'); }
             lessonManifest = await manifestResponse.json();
-            teacherLessonData = await teacherResponse.json();
+
+            // Step 2: Check if the manifest specifies a teacher guide
+            if (lessonManifest && lessonManifest.teacherGuideFile) {
+                // Step 3: Use the filename from the manifest to fetch the correct teacher file
+                const teacherResponse = await fetch(`data/${lessonManifest.teacherGuideFile}`);
+                if (!teacherResponse.ok) { throw new Error(`Could not fetch teacher guide: ${lessonManifest.teacherGuideFile}`); }
+                teacherLessonData = await teacherResponse.json();
+            } else {
+                console.warn("No teacherGuideFile specified in the lesson manifest.");
+            }
         } catch (error){
             console.error("ERROR IN LOADALLDATA:", error);
             document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check JSON format and paths.</p>`;
@@ -50,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPageIndex = index;
         const pageInfo = currentLessonPages[currentPageIndex];
 
-        // Hide all containers initially
         iframe.style.display = 'none';
         imageContainer.style.display = 'none';
 
@@ -59,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.src = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
         } else if (pageInfo.type === 'image') {
             imageContainer.style.display = 'flex';
-            imageContainer.innerHTML = ''; // Clear previous image
+            imageContainer.innerHTML = '';
             const img = document.createElement('img');
             img.src = `data/${pageInfo.file}`;
             img.alt = pageInfo.block;
@@ -100,7 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTeacherPane() {
-        if (!teacherLessonData || !currentLessonPages.length) return;
+        if (!teacherLessonData || !currentLessonPages.length) {
+            paneContent.innerHTML = '<p>Teacher support content is not available for this lesson.</p>';
+            return;
+        }
         paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
         if (!teacherLessonData.lesson_support_sessions || !Array.isArray(teacherLessonData.lesson_support_sessions) || teacherLessonData.lesson_support_sessions.length === 0) {
@@ -158,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initializePlayer() {
         await loadAllData();
-        if (lessonManifest && teacherLessonData) {
+        if (lessonManifest) {
             populateDropdown();
             buildLessonSequence();
             loadPage(0);
