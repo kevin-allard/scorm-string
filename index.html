@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson Player with Learnosity</title>
     <link rel="stylesheet" href="style.css">
-    <!-- The Learnosity API script is required -->
+    <!-- The Learnosity API script is required for the Quick Check items -->
     <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
 </head>
 <body>
@@ -20,9 +20,14 @@
         </header>
         
         <main id="content-window">
-            <!-- This iframe MUST have the id "content-frame" -->
-            <iframe id="content-frame" src="" title="Lesson Content"></iframe>
-            <!-- This div MUST have the id "learnosity-container" -->
+            <!-- 
+              THE FINAL FIX IS HERE: The 'sandbox' attribute is added to the iframe.
+              This prevents the SCORM content's script from crashing due to a cross-origin error,
+              which was causing the player to appear blank.
+            -->
+            <iframe id="content-frame" src="" title="Lesson Content" sandbox="allow-scripts allow-same-origin"></iframe>
+            
+            <!-- This div is the target for Learnosity items -->
             <div id="learnosity-container"></div>
         </main>
         
@@ -43,6 +48,7 @@
     </div>
     <div id="pane-backdrop"></div>
 
+    <!-- Script loading order is important -->
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
