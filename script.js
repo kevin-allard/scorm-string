@@ -1,21 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let lessonManifest = null, teacherLessonData = null, currentLessonPages = [], currentPageIndex = 0;
 
-    // --- INITIAL DIAGNOSTIC CHECK ---
-    if (typeof LearnosityItems === 'undefined') {
-        console.error("DIAGNOSTIC: The 'LearnosityItems' object is UNDEFINED. This means the Learnosity script from index.html either failed to load, was blocked, or did not run correctly.");
-        document.body.innerHTML = `<p style="color:red; font-family: sans-serif; padding: 20px;">CRITICAL ERROR: The Learnosity library failed to load. Please check the browser console's Network tab for errors related to 'items.learnosity.com'.</p>`;
-        return; // Stop all further execution.
-    }
-
-    // --- 1. STATE & DATA ---
-    let lessonManifest = null;
-    let teacherLessonData = null;
-    let currentLessonPages = [];
-    let currentPageIndex = 0;
-
-    // --- 2. DOM ELEMENT REFERENCES ---
     const iframe = document.getElementById('content-frame');
-    const learnosityContainer = document.getElementById('learnosity-container');
+    const imageContainer = document.getElementById('image-container');
     const playerTitle = document.getElementById('player-title');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
@@ -27,25 +14,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const paneContent = document.getElementById('pane-content');
     const paneBackdrop = document.getElementById('pane-backdrop');
 
-    // --- 3. DATA LOADING ---
     async function loadAllData() {
         try {
             const [manifestResponse, teacherResponse] = await Promise.all([
                 fetch('data/lesson-manifest.json'),
                 fetch(CONFIG.teacherDataPath)
             ]);
-            if (!manifestResponse.ok || !teacherResponse.ok) {
-                throw new Error('Failed to fetch one or more data files.');
-            }
+            if (!manifestResponse.ok || !teacherResponse.ok) { throw new Error('Failed to fetch data files.'); }
             lessonManifest = await manifestResponse.json();
             teacherLessonData = await teacherResponse.json();
         } catch (error){
-            console.error("DETAILED ERROR IN LOADALLDATA:", error);
-            document.body.innerHTML = `<p style="color:red; font-family: sans-serif; padding: 20px;">ERROR: Could not load lesson-manifest.json or teacher data. Please check the file paths in your 'data' folder and the JSON format.</p>`;
+            console.error("ERROR IN LOADALLDATA:", error);
+            document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check JSON format and paths.</p>`;
         }
     }
 
-    // --- 4. CORE PLAYER LOGIC ---
     function buildLessonSequence() {
         if (!lessonManifest) return;
         currentLessonPages = [];
@@ -54,67 +37,37 @@ document.addEventListener('DOMContentLoaded', () => {
             if (block.title === 'Activate') {
                 const selectedActivity = block.options.find(opt => opt.title === selectedActivateOption);
                 if (selectedActivity) {
-                    selectedActivity.pages.forEach(page => {
-                        currentLessonPages.push({ ...page, folder: selectedActivity.folder, block: `Activate: ${selectedActivity.title}`, genericBlock: 'Activate' });
-                    });
+                    selectedActivity.pages.forEach(page => currentLessonPages.push({ ...page, folder: selectedActivity.folder, block: `Activate: ${selectedActivity.title}`, genericBlock: 'Activate' }));
                 }
             } else {
-                block.pages.forEach(page => {
-                    currentLessonPages.push({ ...page, folder: page.folder || block.folder, block: block.title, genericBlock: block.title });
-                });
+                block.pages.forEach(page => currentLessonPages.push({ ...page, folder: page.folder || block.folder, block: block.title, genericBlock: block.title }));
             }
         });
     }
 
     function loadPage(index) {
-        if (index < 0 || index >= currentLessonPages.length) {
-            if (currentLessonPages.length === 0) updateUI();
-            return;
-        }
+        if (index < 0 || index >= currentLessonPages.length) { if (currentLessonPages.length === 0) updateUI(); return; }
         currentPageIndex = index;
         const pageInfo = currentLessonPages[currentPageIndex];
+
+        // Hide all containers initially
+        iframe.style.display = 'none';
+        imageContainer.style.display = 'none';
+
         if (pageInfo.type === 'xhtml') {
             iframe.style.display = 'block';
-            learnosityContainer.style.display = 'none';
-            learnosityContainer.innerHTML = '';
-            const filePath = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
-            iframe.src = filePath;
-        } else if (pageInfo.type === 'learnosity') {
-            iframe.style.display = 'none';
-            iframe.src = 'about:blank';
-            learnosityContainer.style.display = 'block';
-            renderLearnosityContent(pageInfo);
+            iframe.src = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
+        } else if (pageInfo.type === 'image') {
+            imageContainer.style.display = 'flex';
+            imageContainer.innerHTML = ''; // Clear previous image
+            const img = document.createElement('img');
+            img.src = `data/${pageInfo.file}`;
+            img.alt = pageInfo.block;
+            imageContainer.appendChild(img);
         }
+        
         updateUI();
         updateTeacherPane();
-    }
-
-    async function renderLearnosityContent(pageInfo) {
-        if (pageInfo.activity_reference) {
-            learnosityContainer.innerHTML = '';
-            try {
-                const response = await fetch('/.netlify/functions/learnosity-init', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ activity_reference: pageInfo.activity_reference })
-                });
-                if (!response.ok) throw new Error('Server returned an error.');
-                const signedRequest = await response.json();
-                
-                const itemsApp = LearnosityItems.init(signedRequest, {
-                    readyListener() {
-                        console.log("Learnosity Items API is ready and has rendered the activity!");
-                    },
-                    errorListener(err) {
-                        console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error rendering Learnosity activity:', error);
-                learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
-            }
-        }
     }
 
     function updateUI() {
@@ -146,20 +99,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 5. TEACHER PANE LOGIC ---
     function updateTeacherPane() {
         if (!teacherLessonData || !currentLessonPages.length) return;
         paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
         if (!teacherLessonData.lesson_support_sessions || !Array.isArray(teacherLessonData.lesson_support_sessions) || teacherLessonData.lesson_support_sessions.length === 0) {
-            paneContent.innerHTML = `<p>No support sessions found in the teacher data file.</p>`;
-            return;
+            paneContent.innerHTML = `<p>No support sessions found.</p>`; return;
         }
         const allSupportItems = teacherLessonData.lesson_support_sessions[0].support_items;
-        if(!allSupportItems) { paneContent.innerHTML = `<p>No support items found for this session.</p>`; return; }
+        if(!allSupportItems) { paneContent.innerHTML = `<p>No support items found.</p>`; return; }
         const relevantSupportItems = allSupportItems.filter(item => item.block === currentGenericBlock);
         if (relevantSupportItems.length === 0) {
-            paneContent.innerHTML = `<p>No specific support notes for this lesson block.</p>`;
+            paneContent.innerHTML = `<p>No specific support notes for this block.</p>`;
         } else {
             relevantSupportItems.forEach(item => {
                 const supportEl = renderSupportItem(item);
@@ -182,9 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
              content += '<ul>' + data.questions.map(q => `<li>${q}</li>`).join('') + '</ul>';
         } else if (data.items && Array.isArray(data.items)) {
             content += '<ul>';
-            data.items.forEach(q_set => {
-                content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join('');
-            });
+            data.items.forEach(q_set => content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join(''));
             content += '</ul>';
         }
         el.innerHTML = content;
@@ -192,16 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleTeacherPane(show) {
-        if (show) {
-            teacherPane.classList.add('is-open');
-            paneBackdrop.classList.add('is-visible');
-        } else {
-            teacherPane.classList.remove('is-open');
-            paneBackdrop.classList.remove('is-visible');
-        }
+        if (show) { teacherPane.classList.add('is-open'); paneBackdrop.classList.add('is-visible'); }
+        else { teacherPane.classList.remove('is-open'); paneBackdrop.classList.remove('is-visible'); }
     }
     
-    // --- 6. EVENT LISTENERS ---
     nextBtn.addEventListener('click', () => loadPage(currentPageIndex + 1));
     prevBtn.addEventListener('click', () => loadPage(currentPageIndex - 1));
     activateSelect.addEventListener('change', () => {
@@ -213,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closePaneBtn.addEventListener('click', () => toggleTeacherPane(false));
     paneBackdrop.addEventListener('click', () => toggleTeacherPane(false));
 
-    // --- 7. INITIALIZATION ---
     async function initializePlayer() {
         await loadAllData();
         if (lessonManifest && teacherLessonData) {

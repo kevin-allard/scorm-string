@@ -48,29 +48,38 @@ body {
     background-color: var(--primary-bg);
 }
 
-/* --- THE FINAL FIX IS HERE --- */
 #content-window {
     flex-grow: 1;
     position: relative;
-    /* This tells the container to be a flexbox layout itself */
     display: flex;
     flex-direction: column;
 }
 
-#content-frame, #learnosity-container {
-    /* This tells both children to take up all available space */
+#content-frame {
     flex-grow: 1;
     width: 100%;
     border: none;
-    overflow-y: auto; /* Allow scrolling within the content */
 }
 
-#learnosity-container {
-    padding: 20px;
+#image-container {
+    display: none; /* Hidden by default */
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
     box-sizing: border-box;
-    display: none; /* Hide by default */
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
 }
-/* --- END OF FINAL FIX --- */
+
+#image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 
 #player-header h1 { font-size: 1.2rem; margin: 0; }
 #controls label { margin-right: 10px; font-size: 0.9rem; }
