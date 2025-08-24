@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- INITIAL DIAGNOSTIC CHECK ---
+    if (typeof LearnosityItems === 'undefined') {
+        console.error("DIAGNOSTIC: The 'LearnosityItems' object is UNDEFINED. This means the Learnosity script from index.html either failed to load, was blocked, or did not run correctly.");
+        document.body.innerHTML = `<p style="color:red; font-family: sans-serif; padding: 20px;">CRITICAL ERROR: The Learnosity library failed to load. Please check the browser console's Network tab for errors related to 'items.learnosity.com'.</p>`;
+        return; // Stop all further execution.
+    }
+
     // --- 1. STATE & DATA ---
     let lessonManifest = null;
     let teacherLessonData = null;
@@ -84,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function renderLearnosityContent(pageInfo) {
         if (pageInfo.activity_reference) {
-            learnosityContainer.innerHTML = ''; // The API needs a clean container
+            learnosityContainer.innerHTML = '';
             try {
                 const response = await fetch('/.netlify/functions/learnosity-init', {
                     method: 'POST',
@@ -94,8 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Server returned an error.');
                 const signedRequest = await response.json();
                 
-                // ** THE FINAL FIX IS HERE: Call 'LearnosityItems.init'. **
-                // This is the correct global object created by the script in index.html.
                 const itemsApp = LearnosityItems.init(signedRequest, {
                     readyListener() {
                         console.log("Learnosity Items API is ready and has rendered the activity!");

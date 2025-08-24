@@ -6,11 +6,22 @@
     <title>Lesson Player with Learnosity</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- 
-      THE FINAL FIX IS HERE: This loads the correct Learnosity Activities API.
-      This ensures the 'LearnosityActivities' object is defined for our script to use.
-    -->
-    <script src="https://activities.learnosity.com/?v2024.1.LTS"></script>
+    <!-- This is the correct and only URL for the Learnosity Items & Activities API. -->
+    <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
+    
+    <!-- This is the mock SCORM API to prevent errors from the XHTML content. -->
+    <script>
+        window.API = {
+            LMSInitialize: function() { return "true"; },
+            LMSGetValue: function(p) { return ""; },
+            LMSSetValue: function(p, v) { return "true"; },
+            LMSCommit: function() { return "true"; },
+            LMSFinish: function() { return "true"; },
+            LMSGetLastError: function() { return "0"; },
+            LMSGetErrorString: function(e) { return "No error"; },
+            LMSGetDiagnostic: function(e) { return "No diagnostic information"; }
+        };
+    </script>
 </head>
 <body>
     <div id="player-container">
@@ -35,7 +46,6 @@
         </footer>
     </div>
 
-    <!-- The Teacher Pane structure -->
     <div id="teacher-pane">
         <div class="pane-header">
             <h2>Teacher Support</h2>
