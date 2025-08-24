@@ -84,8 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function renderLearnosityContent(pageInfo) {
         if (pageInfo.activity_reference) {
-            // The Activities API needs a clean container to render into.
-            learnosityContainer.innerHTML = '';
+            learnosityContainer.innerHTML = ''; // The API needs a clean container
             try {
                 const response = await fetch('/.netlify/functions/learnosity-init', {
                     method: 'POST',
@@ -95,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Server returned an error.');
                 const signedRequest = await response.json();
                 
-                // ** THE FINAL FIX IS HERE: Call 'LearnosityActivities.init'. **
-                // This is the correct API for rendering a full activity.
-                LearnosityActivities.init(signedRequest, {
+                // ** THE FINAL FIX IS HERE: Call 'LearnosityItems.init'. **
+                // This is the correct global object created by the script in index.html.
+                const itemsApp = LearnosityItems.init(signedRequest, {
                     readyListener() {
-                        console.log("Learnosity Activities API is ready!");
+                        console.log("Learnosity Items API is ready and has rendered the activity!");
                     },
                     errorListener(err) {
                         console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
