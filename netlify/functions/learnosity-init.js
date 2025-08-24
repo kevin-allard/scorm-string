@@ -1,8 +1,7 @@
 // File Path: netlify/functions/learnosity-init.js
-// This is the final, definitive version that surgically fixes the SDK issue.
+// This is a diagnostic script to find the exact domain name.
 
-const Learnosity = require('learnosity-sdk-nodejs');
-const crypto = require('crypto');
+const { Learnosity } = require('learnosity-sdk-nodejs');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -21,45 +20,27 @@ exports.handler = async (event) => {
         const consumerKey = process.env.LEARNOSITY_CONSUMER_KEY;
         const consumerSecret = process.env.LEARNOSITY_CONSUMER_SECRET;
         
-        // --- PRE-FLIGHT CHECK ---
-        // Let's add a definitive check to be 100% sure about the variable types.
-        if (typeof consumerKey !== 'string' || typeof consumerSecret !== 'string') {
-            console.error('CRITICAL ERROR: Consumer Key or Secret is not a string.');
-            console.error('Type of consumerKey:', typeof consumerKey);
-            console.error('Type of consumerSecret:', typeof consumerSecret);
-            throw new Error('Invalid credential type.');
-        }
-
         const headers = event.headers;
         const domain = headers['x-forwarded-host'] || 'localhost';
-        
+
+        // --- THIS IS THE NEW DIAGNOSTIC LINE ---
+        console.log(`Domain being used for signing: ${domain}`);
+        // -----------------------------------------
+
         const learnositySdk = new Learnosity();
         
         const request = {
             user_id: '$ANONYMIZED_USER_ID',
-            session_id: crypto.randomUUID(), 
+            session_id: learnositySdk.utils.uuid(), 
             domain: domain,
             items: [item_reference],
             rendering_type: 'inline'
         };
 
-        // ** THE SURGICAL FIX IS HERE **
-        // Instead of passing the security object directly, we will pre-initialize
-        // the SDK instance with the credentials. This bypasses the part of the .init()
-        // method that is causing the crash.
-        const securityPacket = {
+        const signedRequest = learnositySdk.init('items', {
             consumer_key: consumerKey,
-            domain: domain
-        };
-        
-        // The .init() method takes (service, securityPacket, secret, requestObject)
-        // We will call it with this more explicit signature.
-        const signedRequest = learnositySdk.init(
-            'items',
-            securityPacket,
-            consumerSecret, // Pass the secret as a separate, guaranteed string argument
-            request
-        );
+            consumer_secret: consumerSecret
+        }, request);
 
         return {
             statusCode: 200,
