@@ -6,22 +6,10 @@
     <title>Lesson Player with Learnosity</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- This is the correct and only URL for the Learnosity Items & Activities API. -->
-    <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
-    
-    <!-- This is the mock SCORM API to prevent errors from the XHTML content. -->
-    <script>
-        window.API = {
-            LMSInitialize: function() { return "true"; },
-            LMSGetValue: function(p) { return ""; },
-            LMSSetValue: function(p, v) { return "true"; },
-            LMSCommit: function() { return "true"; },
-            LMSFinish: function() { return "true"; },
-            LMSGetLastError: function() { return "0"; },
-            LMSGetErrorString: function(e) { return "No error"; },
-            LMSGetDiagnostic: function(e) { return "No diagnostic information"; }
-        };
-    </script>
+    <!-- 
+      NOTE: Scripts have been moved to the end of the <body> tag.
+      This prevents a script loading failure from blocking the page from rendering.
+    -->
 </head>
 <body>
     <div id="player-container">
@@ -46,6 +34,7 @@
         </footer>
     </div>
 
+    <!-- The Teacher Pane structure -->
     <div id="teacher-pane">
         <div class="pane-header">
             <h2>Teacher Support</h2>
@@ -54,6 +43,27 @@
         <div id="pane-content"></div>
     </div>
     <div id="pane-backdrop"></div>
+
+    <!-- 
+      THE FIX IS HERE: All scripts are moved to the end of the body.
+      This is the standard practice for robust web applications.
+      The order of these scripts is critical.
+    -->
+    <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
+    
+    <script>
+        // Mock SCORM 1.2 API to prevent errors from XHTML content.
+        window.API = {
+            LMSInitialize: function() { return "true"; },
+            LMSGetValue: function(p) { return ""; },
+            LMSSetValue: function(p, v) { return "true"; },
+            LMSCommit: function() { return "true"; },
+            LMSFinish: function() { return "true"; },
+            LMSGetLastError: function() { return "0"; },
+            LMSGetErrorString: function(e) { return "No error"; },
+            LMSGetDiagnostic: function(e) { return "No diagnostic information"; }
+        };
+    </script>
 
     <script src="config.js"></script>
     <script src="script.js"></script>
