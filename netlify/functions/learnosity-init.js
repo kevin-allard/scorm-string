@@ -1,8 +1,7 @@
 // File Path: netlify/functions/learnosity-init.js
-// This version adds the required 'activity_id' parameter.
+// This version uses the 'preview' rendering type for teacher-led demonstration.
 
-const Learnosity = require('learnosity-sdk-nodejs');
-const crypto = require('crypto');
+const { Learnosity } = require('learnosity-sdk-nodejs');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -20,29 +19,23 @@ exports.handler = async (event) => {
 
         const consumerKey = process.env.LEARNOSITY_CONSUMER_KEY;
         const consumerSecret = process.env.LEARNOSITY_CONSUMER_SECRET;
-        
-        if (typeof consumerKey !== 'string' || typeof consumerSecret !== 'string') {
-            console.error('CRITICAL ERROR: Consumer Key or Secret is not a string.');
-            throw new Error('Invalid credential type.');
-        }
-
         const headers = event.headers;
         const domain = headers['x-forwarded-host'] || 'scorm-string.netlify.app';
-        
+
         const learnositySdk = new Learnosity();
         
         const request = {
-            user_id: '$ANONYMIZED_USER_ID',
-            session_id: crypto.randomUUID(), 
+            user_id: '$ANONYMIZED_USER_ID', // Can be anonymized as no data is saved
+            session_id: learnositySdk.utils.uuid(), 
             domain: domain,
             activity_template_id: activity_reference,
-            
-            // This is the required parameter that was missing.
-            activity_id: `${activity_reference}-instance-1`, 
-            
             rendering_type: 'inline',
-            type: 'submit_practice',
-            name: 'Quick Check Assessment'
+            
+            // ** THIS IS THE ONLY CHANGE **
+            // 'preview' mode enables features like "Show Answers" and disables saving.
+            type: 'preview',
+            
+            name: 'Quick Check Preview' // Name can be updated for clarity
         };
 
         const signedRequest = learnositySdk.init(
