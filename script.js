@@ -139,9 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.className = 'support-item';
         let content = `<h4>${item.feature_title}</h4>`;
         const data = item.feature_data;
+        
         if (data.purpose) content += `<p><strong>Purpose:</strong> ${data.purpose}</p>`;
+
         if (data.steps) {
             content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
+        } else if (data.content) { // <-- THIS IS THE NEWLY ADDED LOGIC
+             content += data.content;
         } else if (data.text) {
              content += data.text;
         } else if (data.questions) {
@@ -151,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data.items.forEach(q_set => content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join(''));
             content += '</ul>';
         }
+        
         el.innerHTML = content;
         return el;
     }
