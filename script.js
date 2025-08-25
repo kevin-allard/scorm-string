@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const teacherResponse = await fetch(teacherFilePath);
                 if (!teacherResponse.ok) { throw new Error(`Could not fetch teacher guide: ${lessonManifest.teacherGuideFile}`); }
                 teacherLessonData = await teacherResponse.json();
+            } else {
+                console.warn("No teacherGuideFile specified in the lesson manifest.");
             }
         } catch (error){
             console.error("ERROR IN LOADALLDATA:", error);
@@ -101,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- THIS ENTIRE FUNCTION HAS BEEN REWRITTEN ---
     function updateTeacherPane() {
         if (!teacherLessonData || !currentLessonPages.length) {
             paneContent.innerHTML = '<p>Teacher support content is not available for this lesson.</p>';
@@ -109,26 +110,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
-
-        const pacingGuideItem = teacherLessonData.overview_items.find(item => item.overview_item_type === 'pacing_guide');
-
-        if (!pacingGuideItem) {
-            paneContent.innerHTML = `<p>No pacing guide found in teacher data.</p>`;
-            return;
-        }
-
-        const supportBlocks = pacingGuideItem.overview_item_data?.overview_item_data_items?.[0]?.overview_item_data_groups;
-        if (!supportBlocks) {
-            paneContent.innerHTML = `<p>Pacing guide has an unexpected structure.</p>`;
-            return;
-        }
-
-        const relevantBlock = supportBlocks.find(block => block.overview_item_data_group_title === currentGenericBlock);
         
-        if (!relevantBlock || !relevantBlock.overview_item_data_group_items) {
+        const supportSessions = teacherLessonData.lesson_support_sessions;
+
+        if (!supportSessions || !Array.isArray(supportSessions) || supportSessions.length === 0) {
+            paneContent.innerHTML = `<p>No support sessions found in the teacher data file.</p>`;
+            return;
+        }
+        const allSupportItems = supportSessions[0].support_items;
+        if(!allSupportItems) { 
+            paneContent.innerHTML = `<p>No support items found.</p>`;
+            return; 
+        }
+
+        const relevantSupportItems = allSupportItems.filter(item => item.block === currentGenericBlock);
+        if (relevantSupportItems.length === 0) {
             paneContent.innerHTML = `<p>No specific support notes for this block.</p>`;
         } else {
-            relevantBlock.overview_item_data_group_items.forEach(item => {
+            relevantSupportItems.forEach(item => {
                 const supportEl = renderSupportItem(item);
                 paneContent.appendChild(supportEl);
             });
@@ -138,17 +137,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderSupportItem(item) {
         const el = document.createElement('div');
         el.className = 'support-item';
-        
-        // Use the new property names from the JSON file
-        const title = item.overview_item_data_group_item_title || '';
-        const prefix = item.overview_item_data_group_item_prefix || '';
-        const description = item.overview_item_data_group_item_description || 'No description available.';
-
-        let fullTitle = prefix ? `${prefix}: ${title}` : title;
-        
-        let content = `<h4>${fullTitle}</h4>`;
-        content += `<p>${description}</p>`;
-        
+        let content = `<h4>${item.feature_title}</h4>`;
+        const data = item.feature_data;
+        if (data.purpose) content += `<p><strong>Purpose:</strong> ${data.purpose}</p>`;
+        if (data.steps) {
+            content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
+        } else if (data.text) {
+             content += data.text;
+        } else if (data.questions) {
+             content += '<ul>' + data.questions.map(q => `<li>${q}</li>`).join('') + '</ul>';
+        } else if (data.items && Array.isArray(data.items)) {
+            content += '<ul>';
+            data.items.forEach(q_set => content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join(''));
+            content += '</ul>';
+        }
         el.innerHTML = content;
         return el;
     }

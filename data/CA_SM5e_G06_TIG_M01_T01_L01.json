@@ -1,138 +1,347 @@
 {
-  "overview_type": "concept",
-  "overview_pacing": {
+  "lesson_uuid": "cms-g6-m1-t1-l1-tig",
+  "edition_type": "clearmath_grade_6",
+  "lesson_type": "concept",
+  "lesson_audience": "tch",
+  "lesson_pacing": {
     "pacing_type": "minutes",
-    "pacing_amount": 45
+    "pacing_amount": "45"
   },
-  "overview_labels": [
+  "lesson_labels": [
     {
-      "overview_label_type": "session",
-      "overview_label_prefix": "1",
-      "overview_label_title": "Session"
+      "title": "Session",
+      "suffix": "1"
     }
   ],
-  "overview_metadata": {
-    "overview_number": 1,
-    "overview_title": "Taking Apart Numbers and Shapes",
-    "overview_subtitle": "Writing Equivalent Expressions Using the Distributive Property",
-    "overview_description": "In this lesson, students partition area models to see that the sum of the areas of the smaller regions equals the area of the whole model. They then rewrite the product of two factors as a factor times the sum of two or more terms, leading to the formalization of the Distributive Property."
+  "lesson_metadata": {
+    "lesson_title": "Taking Apart Numbers and Shapes",
+    "lesson_subtitle": "Writing Equivalent Expressions Using the Distributive Property",
+    "lesson_description": "In this lesson, students partition area models to see that the sum of the areas of the smaller regions equals the area of the whole model. They then rewrite the product of two factors as a factor times the sum of two or more terms, leading to the formalization of the Distributive Property."
   },
-  "overview_items": [
+  "lesson_overview_items": [
     {
-      "overview_item_type": "learning_goals",
-      "overview_item_content_type": "html",
-      "overview_item_title": "My Learning Goals",
-      "overview_item_data": {
-        "overview_item_data_type": "list",
-        "overview_item_data_items": [
+      "uuid": "lg-distributive-property-goals",
+      "feature_type": "learning_goals",
+      "feature_title": "My Learning Goals",
+      "feature_data": {
+        "data_type": "rich_text_list",
+        "items": [
           "I can recognize parts of an expression as a single entity.",
           "I can apply the Distributive Property to rewrite the product of two factors."
         ]
       }
     },
     {
-      "overview_item_type": "big_ideas",
-      "overview_item_content_type": "text",
-      "overview_item_title": "Big Idea",
-      "overview_item_data": {
-        "overview_item_data_type": "list",
-        "overview_item_data_items": [
+      "uuid": "bi-generalizing-representations",
+      "feature_type": "big_ideas",
+      "feature_title": "Big Idea",
+      "feature_data": {
+        "data_type": "list",
+        "items": [
           "Generalizing with Multiple Representations"
         ]
       }
     },
     {
-      "overview_item_type": "essential_ideas",
-      "overview_item_content_type": "html",
-      "overview_item_title": "Essential Ideas",
-      "overview_item_data": {
-        "overview_item_data_type": "list",
-        "overview_item_data_items": [
+      "uuid": "mc-taking-apart-numbers",
+      "feature_type": "make_a_connection",
+      "feature_title": "Make a Connection",
+      "feature_data": {
+        "data_type": "rich_text",
+        "content": "You know how to operate with numbers using different strategies. Taking apart numbers before you operate can highlight important information or make calculations easier."
+      }
+    },
+    {
+      "uuid": "lp-expressing-number-sentences",
+      "feature_type": "learning_prompt",
+      "feature_title": "Learning Prompt",
+      "feature_content_type": "html",
+      "feature_data": {
+        "data_type": "rich_text",
+        "prompt_question": "How can you use these strategies to express number sentences in different ways?",
+        "prompt_answer": "There are many ways to rewrite equivalent expressions using properties. The Distributive Property of Multiplication over Addition states that for any numbers a, b, and c, <math><mi>a</mi><mo stretchy=\"false\">(</mo><mi>b</mi><mo>+</mo><mi>c</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>a</mi><mi>b</mi><mo>+</mo><mi>a</mi><mi>c</mi></math>."
+      }
+    },
+    {
+      "uuid": "sts-distributive-property",
+      "feature_type": "setting_the_stage",
+      "feature_title": "Setting the Stage",
+      "feature_data": {
+        "data_type": "rich_text_list",
+        "items": [
+          "Communicate the learning goals and key terms to look for.",
+          "Tap into your students' prior learning by reading the Make a Connection.",
+          "Provide a sense of direction by asking the Learning Prompt."
+        ]
+      }
+    },
+    {
+      "uuid": "lg-distributive-property-mll",
+      "feature_type": "language_goals",
+      "feature_title": "MLL Language Goal",
+      "feature_data": {
+        "data_type": "rich_text",
+        "content": "I can explain the Distributive Property using an area model representation and casual connectors such as because and so."
+      }
+    },
+    {
+      "uuid": "cc-taking-wholes-apart",
+      "feature_type": "content_connection",
+      "feature_title": "Content Connection",
+      "feature_data": {
+        "data_type": "list",
+        "items": [
+          "Taking Wholes Apart, Putting Parts Together"
+        ]
+      }
+    },
+    {
+      "uuid": "pg-taking-apart-numbers",
+      "feature_type": "lesson_structure_and_pacing_guide",
+      "feature_title": "Lesson Structure and Pacing Guide",
+      "feature_data": {
+        "data_type": "session_list",
+        "items": [
+          { "session": 1, "block": "Activate", "activity_no": null, "title": "Piles of Tiles", "instructional_strategies": [ "Explaining Their Thinking" ], "description": "Students investigate a partially tiled space and determine the number of tiles needed to complete the space.", "duration_minutes": 5, "mode": "presentation" },
+          { "session": 1, "block": "Explore and Develop", "activity_no": "Activity 1", "title": "Connecting Area Models and the Distributive Property", "instructional_strategies": [ "Investigation", "Real-World Problem Solving", "Worked Example" ], "description": "Students rewrite products to formalize the Distributive Property.", "duration_minutes": 25, "mode": "book" },
+          { "session": 1, "block": "Reflect", "activity_no": null, "title": "The Floor Is Yours", "instructional_strategies": [ "Exit Ticket Application" ], "description": "Students use the Distributive Property to design a gym floor plan.", "duration_minutes": 15, "mode": "book" }
+        ]
+      }
+    },
+    {
+      "uuid": "ei-distributive-property-essentials",
+      "feature_type": "essential_ideas",
+      "feature_title": "Essential Ideas",
+      "feature_content_type": "html",
+      "feature_data": {
+        "data_type": "rich_text_list",
+        "items": [
           "The area of a rectangle is the product of its length and width.",
-          "You can illustrate the Distributive Property using an area model of a rectangle with side lengths <math><mi>a</mi></math> and <math><mo stretchy=\"false\">(</mo><mi>b</mi><mo>+</mo><mi>c</mi><mo stretchy=\"false\">)</mo></math>.",
-          "The Distributive Property of Multiplication over Addition states that for any numbers <math><mi>a</mi></math>, <math><mi>b</mi></math>, and <math><mi>c</mi></math>, <math><mi>a</mi><mo stretchy=\"false\">(</mo><mi>b</mi><mo>+</mo><mi>c</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>a</mi><mi>b</mi><mo>+</mo><mi>a</mi><mi>c</mi></math>.",
+          "You can illustrate the Distributive Property using an area model of a rectangle with side lengths a and (b + c).",
+          "The Distributive Property of Multiplication over Addition states that for any numbers a, b, and c, <math><mi>a</mi><mo stretchy=\"false\">(</mo><mi>b</mi><mo>+</mo><mi>c</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>a</mi><mi>b</mi><mo>+</mo><mi>a</mi><mi>c</mi></math>.",
           "You can rewrite equivalent expressions using properties."
         ]
       }
     },
     {
-      "overview_item_type": "key_terms",
-      "overview_item_content_type": "text",
-      "overview_item_title": "Key Terms",
-      "overview_item_data": {
-        "overview_item_data_type": "group_list",
-        "overview_item_data_items": [
-          {
-            "overview_item_data_group_title": "Activity 1",
-            "overview_item_data_group_items": [
-              "numeric expression",
-              "equation",
-              "Distributive Property of Multiplication over Addition"
-            ]
-          }
+      "uuid": "mlr-three-reads",
+      "feature_type": "mlr",
+      "feature_title": "Math Language Routine",
+      "feature_data": {
+        "data_type": "intro_with_list",
+        "is_numbered": true,
+        "introduction": "<p><b>MLR 6: Three Reads</b></p><p>In Question 3 of Activity 1, Connecting Area Models and the Distributive Property, students use a given area model to explain the Distributive Property of Multiplication over Addition. This is an opportunity to implement Three Reads.</p>",
+        "items": [
+          "Have three different students read the definition of the Distributive Property of Multiplication over Addition aloud.",
+          "In Reading 1: Have students make sense of each variable within the definition as they relate to the area model.",
+          "In Reading 2: Have students explain the meaning of each side of the equation in the definition as they relate to the area model.",
+          "In Reading 3: Have a student read the definition and Question 3 aloud.",
+          "Have students work with a partner to answer Question 3.",
+          "Monitor students while they work to select a variety of explanations that students can share in a whole class discussion.",
+          "Use the Purposeful Questions to discuss what it means to distribute something, the formal definition of the Distributive Property of Multiplication over Addition, and the structure of the equation <math><mi>a</mi><mo stretchy=\"false\">(</mo><mi>b</mi><mo>+</mo><mi>c</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>a</mi><mi>b</mi><mo>+</mo><mi>a</mi><mi>c</mi></math>."
         ]
       }
     },
     {
-      "overview_item_type": "pacing_guide",
-      "overview_item_content_type": "text",
-      "overview_item_title": "Lesson Structure and Pacing Guide",
-      "overview_item_data": {
-        "overview_item_data_type": "session_list",
-        "overview_item_data_items": [
-          {
-            "overview_item_data_group_title": "Session 1",
-            "overview_item_data_groups": [
-              {
-                "overview_item_data_group_title": "Activate",
-                "overview_item_data_group_items": [
-                  {
-                    "overview_item_data_group_item_type": "presentation",
-                    "overview_item_data_group_item_title": "Piles of Tiles",
-                    "overview_item_data_group_item_description": "Students investigate a partially tiled space and determine the number of tiles needed to complete the space.",
-                    "overview_item_data_group_item_pacing": { "pacing_type": "minutes", "pacing_amount": 5 }
-                  }
-                ]
-              },
-              {
-                "overview_item_data_group_title": "Explore and Develop",
-                "overview_item_data_group_items": [
-                  {
-                    "overview_item_data_group_item_type": "book",
-                    "overview_item_data_group_item_prefix": "Activity 1",
-                    "overview_item_data_group_item_title": "Connecting Area Models and the Distributive Property",
-                    "overview_item_data_group_item_description": "Students rewrite products to formalize the Distributive Property.",
-                    "overview_item_data_group_item_pacing": { "pacing_type": "minutes", "pacing_amount": 25 }
-                  }
-                ]
-              },
-              {
-                "overview_item_data_group_title": "Reflect",
-                "overview_item_data_group_items": [
-                  {
-                    "overview_item_data_group_item_type": "book",
-                    "overview_item_data_group_item_title": "The Floor Is Yours",
-                    "overview_item_data_group_item_description": "Students use the Distributive Property to design a gym floor plan.",
-                    "overview_item_data_group_item_pacing": { "pacing_type": "minutes", "pacing_amount": 15 }
-                  }
-                ]
-              }
+      "uuid": "mll-scaffolds-distributive-property",
+      "feature_type": "multilingual_supports",
+      "feature_title": "Multilingual Learner Supports",
+      "feature_data": {
+        "data_type": "intro_with_structured_list",
+        "introduction": "This lesson provides scaffolded supports tailored for students at different English proficiency levels—Emerging, Expanding, and Bridging—to meet the Learning and Language Goals. These progressively challenging suggestions build language and mathematical understanding.",
+        "items": [
+          { "title": "Visual Aids and Gestures", "description": "Use color-coded area models and cutout shapes alongside labeled interactive whiteboards for demonstrations." },
+          { "title": "Sentence Frames", "description": "Guide student explanations from simple area calculations to complex distributive property justifications." },
+          { "title": "Word Banks", "description": "Include mathematical terms for area and multiplication alongside scenario-specific vocabulary and causal connectors." },
+          { "title": "Partner/Group Work", "description": "Facilitate pair and small group collaborations to explain area models and create gym floor layouts." },
+          { "title": "Hands-On Activities", "description": "Engage students with whiteboards, cards, and cutout shapes to represent and manipulate area models." }
+        ]
+      }
+    }
+  ],
+  "lesson_support_sessions": [
+    {
+      "session": 1,
+      "support_items": [
+        {
+          "uuid": "fn-piles-of-tiles",
+          "feature_type": "facilitation_notes",
+          "feature_title": "Activate",
+          "block": "Activate",
+          "feature_data": {
+            "data_type": "detailed_activity_facilitation",
+            "purpose": "To investigate a partially tiled space and determine the number of tiles needed to complete the space",
+            "steps": [
+              "Go online to choose a variation of the activity.",
+              "Display, read, and discuss the situation.",
+              "Use a Think-Pair-Share routine to discuss the activity.",
+              "Share and summarize: You can use tiles to determine the area of a figure.",
+              "Consider using any of the embedded supports for this activity located in the Clear Lesson Player."
             ]
           }
-        ]
-      }
-    },
-    {
-      "overview_item_type": "materials_needed",
-      "overview_item_content_type": "text",
-      "overview_item_title": "Materials Needed",
-      "overview_item_data": {
-        "overview_item_data_type": "list",
-        "overview_item_data_items": [
-          "If facilitating this lesson without student devices, no additional materials are needed.",
-          "To avoid printing additional materials not included in MATHbook (like Activate activities and Session Quick Checks) project them using the Present button above."
-        ]
-      }
+        },
+        {
+          "uuid": "fn-connecting-area-models",
+          "feature_type": "facilitation_notes",
+          "feature_title": "Explore and Develop",
+          "block": "Explore and Develop",
+          "feature_data": {
+            "data_type": "detailed_activity_facilitation",
+            "purpose": "To rewrite products to formalize the Distributive Property",
+            "driver_of_investigation": "Make sense of the world.",
+            "steps": [
+              "Read and discuss the situation.",
+              "Group students to complete 1.",
+              "Check in and share.",
+              "Read and discuss the key terms.",
+              "Group students to complete 2.",
+              "Check in and share.",
+              "Read and discuss the key term.",
+              "Group students to complete 3.",
+              "Check in and share.",
+              "Read and discuss the Worked Example.",
+              "Group students to complete 4 and 5.",
+              "Share and summarize: You can use the Distributive Property to rewrite the product of two factors as a factor times the sum of two or more terms."
+            ]
+          }
+        },
+        {
+          "uuid": "ds-assistance-for-all-activity1",
+          "feature_type": "differentiation_strategy",
+          "feature_title": "Differentiation Strategy",
+          "block": "Explore and Develop",
+          "activity_number": "1",
+          "feature_data": {
+            "data_type": "differentiation_strategy",
+            "title": "Assistance for All",
+            "text": "<p><b>Action & Expression: Expression & Communication</b></p><p>Students may draw a diagonal line to divide the area. While correct, discuss that their choice makes two trapezoids instead of rectangles, and it is much more efficient to use rectangles. Also, students will need to use rectangles to model the Distributive Property.</p>"
+          }
+        },
+        {
+          "uuid": "oa-decomposing-27",
+          "feature_type": "ongoing_assessment",
+          "feature_title": "Ongoing Assessment",
+          "block": "Explore and Develop",
+          "feature_data": {
+            "data_type": "ongoing_assessment",
+            "introduction_text": "Observe students as they complete 1.",
+            "questions": [
+              "Are students decomposing 27 into numbers that make the computation of the area more efficient?",
+              "Are students using the correct dimensions for each of the smaller regions in the area model?"
+            ]
+          }
+        },
+        {
+          "uuid": "ds-challenge-activity1-q3",
+          "feature_type": "differentiation_strategy",
+          "feature_title": "Differentiation Strategy",
+          "block": "Explore and Develop",
+          "activity_number": "1",
+          "feature_data": {
+            "data_type": "differentiation_strategy",
+            "title": "Challenge Opportunity",
+            "text": "<p><b>Engagement: Sustaining Effort & Persistence</b></p><p>Have students discuss what the equation looks like when they divide the model into more than two regions.</p>"
+          }
+        },
+        {
+          "uuid": "ll-expression-vs-equation",
+          "feature_type": "language_link",
+          "feature_title": "Language Link",
+          "block": "Explore and Develop",
+          "feature_data": {
+            "data_type": "rich_text",
+            "content": "<p><b>Developing Mathematical Language</b></p><p>Help students differentiate between the terms expression and equation. Have students share the similarities and differences between expressions and equations. Then, have them provide additional examples of each.</p>"
+          }
+        },
+        {
+          "uuid": "ds-rep-building-knowledge",
+          "feature_type": "differentiation_strategy",
+          "feature_title": "Differentiation Strategy",
+          "block": "Explore and Develop",
+          "feature_data": {
+            "data_type": "differentiation_strategy",
+            "title": "Assistance for All",
+            "text": "<p><b>Representation: Building Knowledge</b></p><p>Demonstrate how the Distributive Property can help with mental math by expressing one factor as the sum of the tens and ones values. For example: 3 &times; 28 = 3(20 + 8) = 60 + 24 = 84.</p>"
+          }
+        },
+        {
+          "uuid": "pq-explore-distributive-property",
+          "feature_type": "purposeful_questions",
+          "feature_title": "Purposeful Questions",
+          "block": "Explore and Develop",
+          "feature_data": {
+            "data_type": "question_set_list",
+            "items": [
+              { "item_numbers": "1", "question_type": "Gathering", "questions": [ "What is an area model?" ] },
+              { "item_numbers": "1", "question_type": "Probing", "questions": [ "How did you take apart the length to obtain specific values that add up to 27 feet?" ] },
+              { "item_numbers": "2", "question_type": "Probing", "questions": [ "Why is using parentheses necessary?", "Why is 5 repeated in both parentheses?" ] },
+              { "item_numbers": "2", "question_type": "Seeing Structure", "questions": [ "How does the sum in the parentheses relate to the area model?", "How might dividing the rectangle into three regions change the way you write the corresponding equation using the Distributive Property?" ] },
+              { "item_numbers": "2", "question_type": "Reflecting & Justifying", "questions": [ "Which combination of values is the most efficient one to use?" ] },
+              { "item_numbers": "3", "question_type": "Gathering", "questions": [ "What does it mean to distribute something?", "Explain what is meant by 'multiplication over addition.'" ] },
+              { "item_numbers": "3", "question_type": "Seeing Structure", "questions": [ "Where is multiplication implied in the equation a(b + c) = ab + ac?" ] },
+              { "item_numbers": "Worked Example", "question_type": "Probing", "questions": [ "What is the purpose of the arrows in the example?", "Draw a diagram to represent this expression.", "Could you write the expression as (2 + 15)4? Explain your thinking." ] },
+              { "item_numbers": "4", "question_type": "Probing", "questions": [ "What is the error in each false statement?", "How do you read each true statement?" ] },
+              { "item_numbers": "4", "question_type": "Reflecting & Justifying", "questions": [ "What is important to keep in mind when you are distributing a factor over a quantity?" ] },
+              { "item_numbers": "5", "question_type": "Gathering", "questions": [ "What are the factors in the original equation?" ] },
+              { "item_numbers": "5", "question_type": "Probing", "questions": [ "Why did you choose the sum of those two values to represent the factor?", "Are some sums a better choice than others? Explain your thinking." ] }
+            ]
+          }
+        },
+        {
+          "uuid": "fn-the-floor-is-yours",
+          "feature_type": "facilitation_notes",
+          "feature_title": "Reflect",
+          "block": "Reflect",
+          "feature_data": {
+            "data_type": "detailed_activity_facilitation",
+            "purpose": "To use the Distributive Property to design a gym floor plan",
+            "steps": [
+              "Read and discuss the situation.",
+              "Group students to complete the activity.",
+              "Share and summarize: The Distributive Property allows you to represent expressions in different ways."
+            ]
+          }
+        },
+        {
+          "uuid": "ds-jit-gym-floor",
+          "feature_type": "differentiation_strategy",
+          "feature_title": "Differentiation Strategy",
+          "block": "Reflect",
+          "activity_number": "1",
+          "feature_data": {
+            "data_type": "differentiation_strategy",
+            "title": "Just-in-Time Support",
+            "text": "<p><b>Action & Expression: Expression & Communication</b></p><p>Supply students with grid paper that they can use to create the model of the gym floor. When students need additional supports, provide them with an outline of the gym floor with the dimensions labeled.</p>"
+          }
+        },
+        {
+          "uuid": "cc-gym-context",
+          "feature_type": "cultivate_connections",
+          "feature_title": "Cultivate Connections",
+          "block": "Reflect",
+          "feature_data": {
+            "data_type": "rich_text",
+            "content": "The context of a school gym provides an opportunity to connect to students' experiences and local community. Use this opportunity to facilitate discussions, such as what sports students like to play or watch, how they share the gym space during PE class, or whether they participate in any activities in community gyms in the local area."
+          }
+        },
+        {
+          "uuid": "pq-reflect-gym-floor",
+          "feature_type": "purposeful_questions",
+          "feature_title": "Purposeful Questions",
+          "block": "Reflect",
+          "feature_data": {
+            "data_type": "question_set_list",
+            "items": [
+              { "item_numbers": "1", "question_type": "Probing", "questions": [ "What rationale did you use to divide up the gym floor to accommodate the three activities?", "Does the sum of the areas of each of the three regions equal 4200 square feet?" ] },
+              { "item_numbers": "1", "question_type": "Seeing Structure", "questions": [ "How is the width of the gym floor reflected in your equation? The area?" ] },
+              { "item_numbers": "1", "question_type": "Reflecting & Justifying", "questions": [ "How does the use of the Distributive Property change when you are multiplying a single factor by the sum of three numbers?" ] }
+            ]
+          }
+        },
+        { "uuid": "sc-taking-apart-numbers", "feature_type": "session_close", "feature_title": "Session Close", "feature_data": { "data_type": "rich_text", "content": "Go online to access the Quick Check." } },
+        { "uuid": "as-practice-journal-stretch", "feature_type": "assignment_suggestions", "feature_title": "Assignment Suggestions", "feature_data": { "data_type": "rich_text_list", "items": [ "Practice", "Journal", "Stretch (advanced learners)" ] } },
+        { "uuid": "sps-exploring-distributive-property", "feature_type": "skills_practice_suggestions", "feature_title": "Skills Practice Suggestions", "feature_data": { "data_type": "rich_text", "content": "<p><b>Activity 1, Connecting Area Models and the Distributive Property</b></p><ul><li>Problem Set 1: Exploring the Distributive Property with Numeric Expressions</li></ul>" } }
+      ]
     }
   ]
 }
