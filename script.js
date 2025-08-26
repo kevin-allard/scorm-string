@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DIAGNOSTIC: script.js is running.");
-
     let lessonManifest = null, teacherLessonData = null, currentLessonPages = [], currentPageIndex = 0;
+
     const iframe = document.getElementById('content-frame');
     const learnosityContainer = document.getElementById('learnosity-container');
     const playerTitle = document.getElementById('player-title');
@@ -53,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (index < 0 || index >= currentLessonPages.length) { if (currentLessonPages.length === 0) updateUI(); return; }
         currentPageIndex = index;
         const pageInfo = currentLessonPages[currentPageIndex];
+
         iframe.style.display = 'none';
         learnosityContainer.style.display = 'none';
 
@@ -61,14 +61,41 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.src = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
         } else if (pageInfo.type === 'learnosity') {
             learnosityContainer.style.display = 'block';
-            // DIAGNOSTIC STEP: Display a placeholder instead of calling the API.
-            learnosityContainer.innerHTML = `<div style="padding: 20px;"><h4>Learnosity Content</h4><p>The Learnosity activity '${pageInfo.activity_reference}' would be displayed here.</p></div>`;
+            renderLearnosityContent(pageInfo);
         }
         
         updateUI();
         updateTeacherPane();
     }
     
+    async function renderLearnosityContent(pageInfo) {
+        if (pageInfo.activity_reference) {
+            learnosityContainer.innerHTML = '';
+            try {
+                const response = await fetch('/.netlify/functions/learnosity-init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ activity_reference: pageInfo.activity_reference })
+                });
+                if (!response.ok) throw new Error('Server returned an error.');
+                const signedRequest = await response.json();
+                
+                LearnosityItems.init(signedRequest, {
+                    readyListener() {
+                        console.log("Learnosity Items API is ready and has rendered the activity!");
+                    },
+                    errorListener(err) {
+                        console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error rendering Learnosity activity:', error);
+                learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
+            }
+        }
+    }
+
     function updateUI() {
         const totalPages = currentLessonPages.length;
         if (totalPages === 0) {
