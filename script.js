@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lessonManifest = null, teacherLessonData = null, currentLessonPages = [], currentPageIndex = 0;
 
     const iframe = document.getElementById('content-frame');
-    const imageContainer = document.getElementById('image-container');
+    const learnosityContainer = document.getElementById('learnosity-container');
     const playerTitle = document.getElementById('player-title');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
@@ -16,16 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAllData() {
         try {
-            const [manifestResponse, teacherResponse] = await Promise.all([
-                fetch('data/lesson-manifest.json'),
-                fetch(CONFIG.teacherDataPath)
-            ]);
-            if (!manifestResponse.ok || !teacherResponse.ok) { throw new Error('Failed to fetch data files.'); }
+            const manifestResponse = await fetch('data/lesson-manifest.json');
+            if (!manifestResponse.ok) { throw new Error('Could not fetch lesson-manifest.json'); }
             lessonManifest = await manifestResponse.json();
-            teacherLessonData = await teacherResponse.json();
+
+            if (lessonManifest && lessonManifest.teacherGuideFile) {
+                const teacherFilePath = `data/${lessonManifest.teacherGuideFile}`;
+                const teacherResponse = await fetch(teacherFilePath);
+                if (!teacherResponse.ok) { throw new Error(`Could not fetch teacher guide: ${lessonManifest.teacherGuideFile}`); }
+                teacherLessonData = await teacherResponse.json();
+            }
         } catch (error){
             console.error("ERROR IN LOADALLDATA:", error);
-            document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check JSON format and paths.</p>`;
+            document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check console for details.</p>`;
         }
     }
 
@@ -51,22 +54,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const pageInfo = currentLessonPages[currentPageIndex];
 
         iframe.style.display = 'none';
-        imageContainer.style.display = 'none';
+        learnosityContainer.style.display = 'none';
 
         if (pageInfo.type === 'xhtml') {
             iframe.style.display = 'block';
             iframe.src = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
-        } else if (pageInfo.type === 'image') {
-            imageContainer.style.display = 'flex';
-            imageContainer.innerHTML = '';
-            const img = document.createElement('img');
-            img.src = `data/${pageInfo.file}`;
-            img.alt = pageInfo.block;
-            imageContainer.appendChild(img);
+        } else if (pageInfo.type === 'learnosity') {
+            learnosityContainer.style.display = 'block';
+            renderLearnosityContent(pageInfo);
         }
         
         updateUI();
         updateTeacherPane();
+    }
+    
+    async function renderLearnosityContent(pageInfo) {
+        if (pageInfo.activity_reference) {
+            learnosityContainer.innerHTML = '';
+            try {
+                const response = await fetch('/.netlify/functions/learnosity-init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ activity_reference: pageInfo.activity_reference })
+                });
+                if (!response.ok) throw new Error('Server returned an error.');
+                const signedRequest = await response.json();
+                
+                LearnosityItems.init(signedRequest, {
+                    readyListener() {
+                        console.log("Learnosity Items API is ready and has rendered the activity!");
+                    },
+                    errorListener(err) {
+                        console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error rendering Learnosity activity:', error);
+                learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
+            }
+        }
     }
 
     function updateUI() {
@@ -99,25 +126,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTeacherPane() {
-        if (!teacherLessonData || !currentLessonPages.length) {
-            paneContent.innerHTML = '<p>Teacher support content is not available for this lesson.</p>';
-            return;
-        }
+        if (!teacherLessonData || !currentLessonPages.length) return;
         paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
-        
         const supportSessions = teacherLessonData.lesson_support_sessions;
-
         if (!supportSessions || !Array.isArray(supportSessions) || supportSessions.length === 0) {
-            paneContent.innerHTML = `<p>No support sessions found in the teacher data file.</p>`;
-            return;
+            paneContent.innerHTML = `<p>No support sessions found.</p>`; return;
         }
         const allSupportItems = supportSessions[0].support_items;
-        if(!allSupportItems) { 
-            paneContent.innerHTML = `<p>No support items found.</p>`;
-            return; 
-        }
-
+        if(!allSupportItems) { paneContent.innerHTML = `<p>No support items found.</p>`; return; }
         const relevantSupportItems = allSupportItems.filter(item => item.block === currentGenericBlock);
         if (relevantSupportItems.length === 0) {
             paneContent.innerHTML = `<p>No specific support notes for this block.</p>`;

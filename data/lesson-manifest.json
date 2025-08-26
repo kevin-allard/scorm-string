@@ -5,60 +5,25 @@
     {
       "title": "Lesson Overview",
       "pages": [
-        {
-          "type": "xhtml",
-          "file": "378289.xhtml",
-          "folder": "Lesson Overview"
-        }
+        { "type": "xhtml", "file": "378289.xhtml", "folder": "Lesson Overview" }
       ]
     },
     {
       "title": "Activate",
       "options": [
-        {
-          "title": "Piles of Tiles (Money/Bills)",
-          "folder": "Piles of Tiles (Money:Bills)",
-          "pages": [
-            { "type": "xhtml", "file": "294860.xhtml" },
-            { "type": "xhtml", "file": "294861.xhtml" }
-          ]
-        },
-        {
-          "title": "Piles of Tiles (Basketball)",
-          "folder": "Piles of Tiles (Basketball)",
-          "pages": [
-            { "type": "xhtml", "file": "294864.xhtml" },
-            { "type": "xhtml", "file": "294865.xhtml" }
-          ]
-        },
-        {
-          "title": "Piles of Tiles (Garden Bed)",
-          "folder": "Piles of Tiles (Garden Bed)",
-          "pages": [
-            { "type": "xhtml", "file": "294868.xhtml" },
-            { "type": "xhtml", "file": "294869.xhtml" }
-          ]
-        },
-        {
-          "title": "Piles of Tiles (Tile Floor)",
-          "folder": "Piles of Tiles (Tile Floor)",
-          "pages": [
-            { "type": "xhtml", "file": "294872.xhtml" },
-            { "type": "xhtml", "file": "294873.xhtml" }
-          ]
-        }
+        { "title": "Piles of Tiles (Money/Bills)", "folder": "Piles of Tiles (Money:Bills)", "pages": [ { "type": "xhtml", "file": "294860.xhtml" }, { "type": "xhtml", "file": "294861.xhtml" } ] },
+        { "title": "Piles of Tiles (Basketball)", "folder": "Piles of Tiles (Basketball)", "pages": [ { "type": "xhtml", "file": "294864.xhtml" }, { "type": "xhtml", "file": "294865.xhtml" } ] },
+        { "title": "Piles of Tiles (Garden Bed)", "folder": "Piles of Tiles (Garden Bed)", "pages": [ { "type": "xhtml", "file": "294868.xhtml" }, { "type": "xhtml", "file": "294869.xhtml" } ] },
+        { "title": "Piles of Tiles (Tile Floor)", "folder": "Piles of Tiles (Tile Floor)", "pages": [ { "type": "xhtml", "file": "294872.xhtml" }, { "type": "xhtml", "file": "294873.xhtml" } ] }
       ]
     },
     {
       "title": "Explore and Develop",
       "folder": "Activity 1 Connecting Area Models and the Distributive Property",
       "pages": [
-        { "type": "xhtml", "file": "305773.xhtml" },
-        { "type": "xhtml", "file": "309877.xhtml" },
-        { "type": "xhtml", "file": "309883.xhtml" },
-        { "type": "xhtml", "file": "309888.xhtml" },
-        { "type": "xhtml", "file": "309893.xhtml" },
-        { "type": "xhtml", "file": "309991.xhtml" },
+        { "type": "xhtml", "file": "305773.xhtml" }, { "type": "xhtml", "file": "309877.xhtml" },
+        { "type": "xhtml", "file": "309883.xhtml" }, { "type": "xhtml", "file": "309888.xhtml" },
+        { "type": "xhtml", "file": "309893.xhtml" }, { "type": "xhtml", "file": "309991.xhtml" },
         { "type": "xhtml", "file": "309992.xhtml" }
       ]
     },
@@ -73,11 +38,7 @@
     {
       "title": "Interactive Journal",
       "pages": [
-        {
-          "type": "xhtml",
-          "file": "308552.xhtml",
-          "folder": "Interactive Journal"
-        }
+        { "type": "xhtml", "file": "308552.xhtml", "folder": "Interactive Journal" }
       ]
     },
     {
