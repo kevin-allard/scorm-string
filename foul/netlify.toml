@@ -1,0 +1,10 @@
+# netlify.toml
+[build]
+  # This tells Netlify there's no build step for your static files
+  command = "echo 'No build command'"
+  # The folder containing your index.html
+  publish = "/"
+
+[functions]
+  # The directory where your serverless functions will live
+  directory = "netlify/functions/"

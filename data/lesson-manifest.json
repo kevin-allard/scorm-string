@@ -84,16 +84,8 @@
       "title": "Quick Check",
       "pages": [
         {
-          "type": "image",
-          "file": "QC-1.png"
-        },
-        {
-          "type": "image",
-          "file": "QC-2.png"
-        },
-        {
-          "type": "image",
-          "file": "QC-3.png"
+          "type": "learnosity",
+          "activity_reference": "MSMB_C01_M01_T01_L01_QC_S1"
         }
       ]
     }

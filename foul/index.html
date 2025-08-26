@@ -2,9 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Player with Learnosity</title>
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Lesson Player</title>
     <link rel="stylesheet" href="style.css">
+    
+    <script>
+        // Mock SCORM API to prevent errors from XHTML content.
+        window.API = {
+            LMSInitialize: function() { return "true"; }, LMSGetValue: function(p) { return ""; },
+            LMSSetValue: function(p, v) { return "true"; }, LMSCommit: function() { return "true"; },
+            LMSFinish: function() { return "true"; }, LMSGetLastError: function() { return "0"; },
+            LMSGetErrorString: function(e) { return "No error"; }, LMSGetDiagnostic: function(e) { return "No diagnostic information"; }
+        };
+    </script>
 </head>
 <body>
     <div id="player-container">
@@ -19,7 +29,7 @@
         
         <main id="content-window">
             <iframe id="content-frame" src="" title="Lesson Content"></iframe>
-            <div id="learnosity-container"></div>
+            <div id="image-container"></div>
         </main>
         
         <footer id="player-navigation">
@@ -38,16 +48,6 @@
     </div>
     <div id="pane-backdrop"></div>
 
-    <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
-    <script>
-        // Mock SCORM API to prevent errors from XHTML content.
-        window.API = {
-            LMSInitialize: function() { return "true"; }, LMSGetValue: function(p) { return ""; },
-            LMSSetValue: function(p, v) { return "true"; }, LMSCommit: function() { return "true"; },
-            LMSFinish: function() { return "true"; }, LMSGetLastError: function() { return "0"; },
-            LMSGetErrorString: function(e) { return "No error"; }, LMSGetDiagnostic: function(e) { return "No diagnostic information"; }
-        };
-    </script>
     <script src="config.js"></script>
     <script src="script.js"></script>
 </body>

@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     let lessonManifest = null, teacherLessonData = null, currentLessonPages = [], currentPageIndex = 0;
 
     const iframe = document.getElementById('content-frame');
-    const learnosityContainer = document.getElementById('learnosity-container');
+    const imageContainer = document.getElementById('image-container');
     const playerTitle = document.getElementById('player-title');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
@@ -26,10 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const teacherResponse = await fetch(teacherFilePath);
                 if (!teacherResponse.ok) { throw new Error(`Could not fetch teacher guide: ${lessonManifest.teacherGuideFile}`); }
                 teacherLessonData = await teacherResponse.json();
+            } else {
+                console.warn("No teacherGuideFile specified in the lesson manifest.");
             }
         } catch (error){
             console.error("ERROR IN LOADALLDATA:", error);
-            document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check JSON format and paths.</p>`;
+            document.body.innerHTML = `<p style="color:red; font-family: sans-serif;">ERROR: Could not load data files. Check console for details.</p>`;
         }
     }
 
@@ -55,46 +56,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const pageInfo = currentLessonPages[currentPageIndex];
 
         iframe.style.display = 'none';
-        learnosityContainer.style.display = 'none'; // Changed from imageContainer
+        imageContainer.style.display = 'none';
 
         if (pageInfo.type === 'xhtml') {
             iframe.style.display = 'block';
             iframe.src = `${pageInfo.folder}/OEBPS/${pageInfo.file}`;
-        } else if (pageInfo.type === 'learnosity') { // Changed from 'image'
-            learnosityContainer.style.display = 'block';
-            renderLearnosityContent(pageInfo);
+        } else if (pageInfo.type === 'image') {
+            imageContainer.style.display = 'flex';
+            imageContainer.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = `data/${pageInfo.file}`;
+            img.alt = pageInfo.block;
+            imageContainer.appendChild(img);
         }
         
         updateUI();
         updateTeacherPane();
-    }
-    
-    async function renderLearnosityContent(pageInfo) {
-        if (pageInfo.activity_reference) {
-            learnosityContainer.innerHTML = ''; // The API needs a clean container.
-            try {
-                const response = await fetch('/.netlify/functions/learnosity-init', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ activity_reference: pageInfo.activity_reference })
-                });
-                if (!response.ok) throw new Error('Server returned an error.');
-                const signedRequest = await response.json();
-                
-                const itemsApp = LearnosityItems.init(signedRequest, {
-                    readyListener() {
-                        console.log("Learnosity Items API is ready and has rendered the activity!");
-                    },
-                    errorListener(err) {
-                        console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error rendering Learnosity activity:', error);
-                learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
-            }
-        }
     }
 
     function updateUI() {
@@ -127,14 +104,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTeacherPane() {
-        if (!teacherLessonData || !currentLessonPages.length) return;
+        if (!teacherLessonData || !currentLessonPages.length) {
+            paneContent.innerHTML = '<p>Teacher support content is not available for this lesson.</p>';
+            return;
+        }
         paneContent.innerHTML = '';
         const currentGenericBlock = currentLessonPages[currentPageIndex].genericBlock;
-        if (!teacherLessonData.lesson_support_sessions || !Array.isArray(teacherLessonData.lesson_support_sessions) || teacherLessonData.lesson_support_sessions.length === 0) {
-            paneContent.innerHTML = `<p>No support sessions found.</p>`; return;
+        
+        const supportSessions = teacherLessonData.lesson_support_sessions;
+
+        if (!supportSessions || !Array.isArray(supportSessions) || supportSessions.length === 0) {
+            paneContent.innerHTML = `<p>No support sessions found in the teacher data file.</p>`;
+            return;
         }
-        const allSupportItems = teacherLessonData.lesson_support_sessions[0].support_items;
-        if(!allSupportItems) { paneContent.innerHTML = `<p>No support items found.</p>`; return; }
+        const allSupportItems = supportSessions[0].support_items;
+        if(!allSupportItems) { 
+            paneContent.innerHTML = `<p>No support items found.</p>`;
+            return; 
+        }
+
         const relevantSupportItems = allSupportItems.filter(item => item.block === currentGenericBlock);
         if (relevantSupportItems.length === 0) {
             paneContent.innerHTML = `<p>No specific support notes for this block.</p>`;
@@ -151,9 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.className = 'support-item';
         let content = `<h4>${item.feature_title}</h4>`;
         const data = item.feature_data;
+        
         if (data.purpose) content += `<p><strong>Purpose:</strong> ${data.purpose}</p>`;
+
         if (data.steps) {
             content += '<ul>' + data.steps.map(step => `<li>${step}</li>`).join('') + '</ul>';
+        } else if (data.content) { // <-- THIS IS THE NEWLY ADDED LOGIC
+             content += data.content;
         } else if (data.text) {
              content += data.text;
         } else if (data.questions) {
@@ -163,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data.items.forEach(q_set => content += q_set.questions.map(q => `<li><strong>${q_set.question_type || ''}:</strong> ${q}</li>`).join(''));
             content += '</ul>';
         }
+        
         el.innerHTML = content;
         return el;
     }
