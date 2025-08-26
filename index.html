@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Player with Learnosity</title>
+    <title>Lesson Player - DIAGNOSTIC</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <script>console.log("DIAGNOSTIC: 1. HTML body parsed.");</script>
+
     <div id="player-container">
         <header id="player-header">
             <h1 id="player-title">Lesson Title</h1>
@@ -16,19 +18,16 @@
             </div>
             <button id="teacher-btn">Teacher Support</button>
         </header>
-        
         <main id="content-window">
             <iframe id="content-frame" src="" title="Lesson Content"></iframe>
             <div id="learnosity-container"></div>
         </main>
-        
         <footer id="player-navigation">
             <button id="prev-btn">&laquo; Previous</button>
             <span id="page-indicator">Page 0 of 0</span>
             <button id="next-btn">Next &raquo;</button>
         </footer>
     </div>
-
     <div id="teacher-pane">
         <div class="pane-header">
             <h2>Teacher Support</h2>
@@ -38,9 +37,12 @@
     </div>
     <div id="pane-backdrop"></div>
 
+    <script>console.log("DIAGNOSTIC: 2. About to load Learnosity script.");</script>
     <script src="https://items.learnosity.com/?v2024.1.LTS"></script>
+    <script>console.log("DIAGNOSTIC: 3. Learnosity script tag has been processed.");</script>
+    
     <script>
-        // Mock SCORM API to prevent errors from XHTML content.
+        console.log("DIAGNOSTIC: 4. Mock SCORM API script is running.");
         window.API = {
             LMSInitialize: function() { return "true"; }, LMSGetValue: function(p) { return ""; },
             LMSSetValue: function(p, v) { return "true"; }, LMSCommit: function() { return "true"; },
@@ -48,7 +50,11 @@
             LMSGetErrorString: function(e) { return "No error"; }, LMSGetDiagnostic: function(e) { return "No diagnostic information"; }
         };
     </script>
+    
     <script src="config.js"></script>
+    <script>console.log("DIAGNOSTIC: 5. config.js script tag has been processed.");</script>
+
     <script src="script.js"></script>
+    <script>console.log("DIAGNOSTIC: 6. script.js script tag has been processed.");</script>
 </body>
 </html>
