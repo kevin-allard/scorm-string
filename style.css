@@ -48,29 +48,28 @@ body {
     background-color: var(--primary-bg);
 }
 
-/* --- THE FINAL FIX IS HERE: A MORE ROBUST LAYOUT --- */
+/* This is the robust layout for the content area */
 #content-window {
     flex-grow: 1;
-    position: relative; /* This creates a positioning context for its children. */
+    position: relative; /* Creates a positioning context for its children. */
 }
 
 #content-frame, #learnosity-container {
-    /* Use absolute positioning to fill the parent completely. */
+    /* Use absolute positioning to ensure children fill the parent completely. */
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     border: none;
-    overflow-y: auto; /* Allow scrolling within the content */
+    overflow-y: auto; /* Allow scrolling within the content frames */
 }
 
 #learnosity-container {
     padding: 20px;
     box-sizing: border-box;
-    display: none; /* Hide by default */
+    display: none; /* Hidden by default */
 }
-/* --- END OF FINAL FIX --- */
 
 #player-header h1 { font-size: 1.2rem; margin: 0; }
 #controls label { margin-right: 10px; font-size: 0.9rem; }

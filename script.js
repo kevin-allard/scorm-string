@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTeacherPane();
     }
     
-    // --- THIS FUNCTION HAS BEEN UPDATED WITH BETTER DEBUGGING ---
     async function renderLearnosityContent(pageInfo) {
         if (pageInfo.activity_reference) {
             learnosityContainer.innerHTML = '';
@@ -78,33 +77,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ activity_reference: pageInfo.activity_reference })
                 });
-                if (!response.ok) throw new Error(`Server returned an error: ${response.status} ${response.statusText}`);
-                
+                if (!response.ok) throw new Error('Server returned an error.');
                 const signedRequest = await response.json();
                 
-                // DEBUGGING: Log the exact object being sent to Learnosity.
-                console.log("LEARNOSITY-DIAGNOSTIC: Passing this signed request to LearnosityItems.init():", signedRequest);
-
-                const itemsApp = LearnosityItems.init(signedRequest, {
+                LearnosityItems.init(signedRequest, {
                     readyListener() {
-                        console.log("Learnosity Items API is ready and has rendered the activity!");
+                        // THIS IS THE NEW DIAGNOSTIC MESSAGE YOU REQUESTED
+                        console.log("LEARNOSITY-DIAGNOSTIC: readyListener fired. Content received back from Learnosity and is ready to display.");
                     },
-                    // DEBUGGING: Provide a more detailed error on screen.
                     errorListener(err) {
                         console.error("LEARNOSITY-DIAGNOSTIC: Learnosity API reported an error:", err);
-                        learnosityContainer.innerHTML = `
-                            <div style="padding: 20px; border: 2px solid red; background: #fff0f0;">
-                                <h4>Learnosity API Error</h4>
-                                <p><strong>Code:</strong> ${err.code}</p>
-                                <p><strong>Message:</strong> ${err.msg}</p>
-                            </div>
-                        `;
                     }
                 });
 
             } catch (error) {
                 console.error('Error rendering Learnosity activity:', error);
-                learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment. Check the console for details.</p>`;
+                learnosityContainer.innerHTML = `<p style="color: red;">Error: Could not load interactive assessment.</p>`;
             }
         }
     }
